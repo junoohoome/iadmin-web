@@ -1,5 +1,5 @@
-<<<<<<< HEAD
-# ky-admin-templae
+
+# iadmin-web
 > 项目基于  [vue-admin-template](./README_BASE.md) 框架分支permission-control进行二次开发
 , 可以参考开发文档：https://panjiachen.github.io/vue-element-admin-site/zh/guide/
 
@@ -47,7 +47,4 @@
 ### 登录
 
 ### 组件开发
-=======
-# kaiy-admin-cms
 
->>>>>>> 7e30fc02d22b6b3bb67e2b91760a3782a46be44a
