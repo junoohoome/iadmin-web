@@ -49,7 +49,7 @@ module.exports = {
   /**
    * 备案号
    */
-  caseNumber: '粤ICP备xxxxxxx号',
+  // caseNumber: '粤ICP备xxxxxxx号',
 
   /**
    * @type {string | array} 'production' | ['production', 'development']

@@ -34,12 +34,6 @@ const actions = {
       login(userInfo.username, userInfo.password, userInfo.code, userInfo.uuid).then(res => {
         setToken(res.token)
         commit('SET_TOKEN', res.token)
-        // 用户权限信息，用于页面操作判断用户权限
-        if (res.permissions && data.permissions.length > 0) {
-          commit('SET_PERMISSIONS', data.permissions.split(','))
-        } else {
-          commit('SET_PERMISSIONS', [])
-        }
         resolve()
       }).catch(error => {
         reject(error)
@@ -56,6 +50,7 @@ const actions = {
         const avatar = user.avatar === null ? require('@/assets/image/profile.jpg') : process.env.VUE_APP_BASE_API + '/avatar/' + user.avatar
         if (user.roleIds && user.roleIds.length > 0) { // 验证返回的roles是否是一个非空数组
           commit('SET_ROLES', user.roleIds.split(','))
+          commit('SET_PERMISSIONS', res.permissions)
         } else {
           commit('SET_ROLES', ['ROLE_DEFAULT'])
         }
@@ -93,6 +88,7 @@ const actions = {
     })
   }
 }
+
 export default {
   namespaced: true,
   state,

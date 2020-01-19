@@ -42,7 +42,7 @@ import { encrypt } from '@/utils/rsaEncrypt'
 import Config from '@/settings'
 import { getCodeImg } from '@/api/login'
 import Cookies from 'js-cookie'
-import md5 from 'js-md5'
+
 
 export default {
   data() {
@@ -86,14 +86,13 @@ export default {
     },
     getCookie() {
       const username = Cookies.get('username')
-      let password = Cookies.get('password')
+      const password = Cookies.get('password')
       const rememberMe = Cookies.get('rememberMe')
       // 保存cookie里面的加密后的密码
       this.cookiePass = password === undefined ? '' : password
-      password = password === undefined ? this.loginForm.password : password
       this.loginForm = {
         username: username === undefined ? this.loginForm.username : username,
-        password: password,
+        password: password === undefined ? this.loginForm.password : password,
         rememberMe: rememberMe === undefined ? false : Boolean(rememberMe),
         code: ''
       }
@@ -109,7 +108,7 @@ export default {
         }
 
         if (user.password !== this.cookiePass) {
-          user.password = encrypt(md5(user.password))
+          user.password = encrypt(user.password)
         }
         if (valid) {
           this.loading = true
