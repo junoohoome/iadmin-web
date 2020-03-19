@@ -45,7 +45,7 @@ const actions = {
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(res => {
-        const user = res.data
+        const user = res.user
         console.log('用户信息： ', user)
         const avatar = user.avatar === null ? require('@/assets/image/profile.jpg') : process.env.VUE_APP_BASE_API + '/avatar/' + user.avatar
         if (user.roleIds && user.roleIds.length > 0) { // 验证返回的roles是否是一个非空数组

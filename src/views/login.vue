@@ -43,7 +43,6 @@ import Config from '@/settings'
 import { getCodeImg } from '@/api/login'
 import Cookies from 'js-cookie'
 
-
 export default {
   data() {
     return {
