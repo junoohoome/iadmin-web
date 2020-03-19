@@ -42,3 +42,9 @@ export function getCodeImg() {
   })
 }
 
+export function buildRoute() {
+  return request({
+    url: '/getRouters',
+    method: 'get'
+  })
+}

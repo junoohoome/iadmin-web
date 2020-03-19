@@ -1,11 +1,5 @@
 import request from '@/utils/request'
 
-export function buildRoute() {
-  return request({
-    url: '/role/build/router',
-    method: 'get'
-  })
-}
 export function listRoles(params) {
   return request({
     url: '/role/list',

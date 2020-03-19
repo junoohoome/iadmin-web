@@ -1,5 +1,5 @@
 import { constantRoutes } from '@/router'
-import { buildRoute } from '@/api/role'
+import { buildRoute } from '@/api/login'
 import Layout from '@/layout'
 
 const state = {
