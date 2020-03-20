@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" label-position="left" label-width="0px" class="login-form">
-      <h3 class="title">iadmin后台管理系统</h3>
+      <h3 class="title">IAdmin后台管理</h3>
       <el-form-item prop="username">
         <el-input v-model="loginForm.username" type="text" auto-complete="off" placeholder="账号">
           <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />
@@ -79,8 +79,9 @@ export default {
   methods: {
     getCode() {
       getCodeImg().then(res => {
-        this.codeUrl = res.img
-        this.loginForm.uuid = res.uuid
+        const data = res.data
+        this.codeUrl = data.img
+        this.loginForm.uuid = data.uuid
       })
     },
     getCookie() {

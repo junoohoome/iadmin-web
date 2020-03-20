@@ -32,8 +32,9 @@ const actions = {
   login({ commit }, userInfo) {
     return new Promise((resolve, reject) => {
       login(userInfo.username, userInfo.password, userInfo.code, userInfo.uuid).then(res => {
-        setToken(res.token)
-        commit('SET_TOKEN', res.token)
+        const data = res.data
+        setToken(data.token)
+        commit('SET_TOKEN', data.token)
         resolve()
       }).catch(error => {
         reject(error)
@@ -45,12 +46,13 @@ const actions = {
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(res => {
-        const user = res.user
-        console.log('用户信息： ', user)
-        const avatar = user.avatar === null ? require('@/assets/image/profile.jpg') : process.env.VUE_APP_BASE_API + '/avatar/' + user.avatar
-        if (user.roleIds && user.roleIds.length > 0) { // 验证返回的roles是否是一个非空数组
-          commit('SET_ROLES', user.roleIds.split(','))
-          commit('SET_PERMISSIONS', res.permissions)
+        const data = res.data
+        const user = data.user
+        const avatar = user.avatar == null
+          ? require('@/assets/image/profile.jpg') : process.env.VUE_APP_BASE_API + '/avatar/' + user.avatar
+        if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
+          commit('SET_ROLES', data.roles)
+          commit('SET_PERMISSIONS', data.permissions)
         } else {
           commit('SET_ROLES', ['ROLE_DEFAULT'])
         }

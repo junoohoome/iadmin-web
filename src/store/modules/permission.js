@@ -20,9 +20,6 @@ const actions = {
       // 根据用户角色查询菜单
       buildRoute().then(response => {
         let accessedRoutes = response.data
-        if (!accessedRoutes) {
-          accessedRoutes = []
-        }
         // 匹配不了的路径，跳转到404，该路由需添加到最后
         accessedRoutes.push({ path: '*', redirect: '/404', hidden: true })
         accessedRoutes = filterAsyncRouter(accessedRoutes)

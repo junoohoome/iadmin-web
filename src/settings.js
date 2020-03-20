@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: 'iadmin后台管理',
+  title: 'IAdmin后台管理',
 
   /**
    * @description 记住密码状态下的密码在Cookie中存储的天数，默认1天

@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie'
 
-const TokenKey = 'IADMIN-KEY'
+const TokenKey = 'IADMIN-TOKEN'
 
 export function getToken() {
   return Cookies.get(TokenKey)
