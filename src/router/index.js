@@ -42,25 +42,21 @@ export const constantRoutes = [
       }
     ]
   },
-  // 登录页
   {
     path: '/login',
     component: () => import('@/views/login'),
     hidden: true
   },
-  // 错误页 404
   {
     path: '/404',
     component: () => import('@/views/error/404'),
     hidden: true
   },
-  // 错误页 401
   {
     path: '/401',
     component: () => import('@/views/error/401'),
     hidden: true
   },
-  // 首页
   {
     path: '/',
     component: Layout,
@@ -89,7 +85,7 @@ export const constantRoutes = [
 ]
 
 export default new Router({
-  mode: 'history',
+  mode: 'history',  // 去掉url中的#
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })

@@ -21,7 +21,7 @@ const actions = {
       buildRoute().then(response => {
         let accessedRoutes = response.data
         // 匹配不了的路径，跳转到404，该路由需添加到最后
-        accessedRoutes.push({ path: '*', redirect: '/404', hidden: true })
+        // accessedRoutes.push({ path: '*', redirect: '/404', hidden: true })
         accessedRoutes = filterAsyncRouter(accessedRoutes)
         commit('SET_ROUTES', accessedRoutes)
         resolve(accessedRoutes)
