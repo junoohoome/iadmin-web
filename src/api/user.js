@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询用户列表
 export function getList(query) {
   return request({
-    url: '/user/list',
+    url: '/sysUser',
     method: 'get',
     params: query
   })
@@ -11,7 +11,7 @@ export function getList(query) {
 // 新增用户
 export function addUser(data) {
   return request({
-    url: '/user',
+    url: '/sysUser',
     method: 'post',
     data
   })
@@ -20,7 +20,7 @@ export function addUser(data) {
 // 修改用户
 export function updateUser(data) {
   return request({
-    url: '/user',
+    url: '/sysUser',
     method: 'put',
     data
   })
@@ -38,9 +38,9 @@ export function updateUserStatus(id, status) {
 }
 
 // 删除用户
-export function delUser(userId) {
+export function delUser(idList) {
   return request({
-    url: '/user/' + userId,
+    url: '/sysUser/' + idList,
     method: 'delete'
   })
 }

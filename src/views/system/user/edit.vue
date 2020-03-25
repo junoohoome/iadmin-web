@@ -36,7 +36,7 @@
 
 <script>
 import { addUser, updateUser } from '@/api/user'
-import { getRoleOptions } from '@/api/role'
+// import { getRoleOptions } from '@/api/role'
 export default {
   props: {
     isAdd: {
@@ -153,9 +153,9 @@ export default {
       })
     },
     getRoleOptions() {
-      getRoleOptions().then(response => {
-        this.roleOptions = response.data
-      })
+      // getRoleOptions().then(response => {
+      //   this.roleOptions = response.data
+      // })
     },
     initForm(data) {
       if (!data) {

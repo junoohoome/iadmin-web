@@ -9,32 +9,32 @@
       <el-button class="filter-item" type="success" icon="el-icon-search" @click="handleQuery">
         搜索
       </el-button>
-      <el-button v-permission="['admin','user:add']" class="filter-item" type="primary" icon="el-icon-plus" @click="handleAdd">
+      <el-button v-permission="['admin','system:user:add']" class="filter-item" type="primary" icon="el-icon-plus" @click="handleAdd">
         新增
       </el-button>
-      <el-button v-permission="['admin','user:delete']" class="filter-item" type="danger" icon="el-icon-delete" :disabled="multiple" @click="handleDelete">
+      <el-button v-permission="['admin','system:user:delete']" class="filter-item" type="danger" icon="el-icon-delete" :disabled="multiple" @click="handleDelete">
         删除
       </el-button>
     </div>
 
     <el-table v-loading="loading" :data="data" style="width: 100%;" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" />
-      <el-table-column label="用户账号" prop="account" align="center" />
-      <el-table-column label="用户名称" prop="username" align="center" />
+      <el-table-column label="用户账号" prop="userName" align="center" />
+      <el-table-column label="用户名称" prop="nickName" align="center" />
       <el-table-column label="手机号码" prop="mobile" />
       <el-table-column label="用户邮箱" prop="email" align="center" />
-      <el-table-column label="角色" prop="roleNames" align="center" />
+<!--      <el-table-column label="角色" prop="roleNames" align="center" />-->
       <el-table-column label="状态" prop="status" align="center" width="110">
         <template slot-scope="{row}">
-          <el-switch v-model="row.status" :active-value="1" :inactive-value="0" @change="handleStatusChange(row)" />
+          <el-switch v-model="row.status" :active-value="0" :inactive-value="1" @change="handleStatusChange(row)" />
         </template>
       </el-table-column>
-      <el-table-column v-if="checkPermission(['admin','user:edit', 'user:del'])" label="操作" width="300px" align="center">
+      <el-table-column v-if="checkPermission(['admin','system:user:edit', 'system:user:del'])" label="操作" width="300px" align="center">
         <template slot-scope="{row}">
-          <el-button v-permission="['admin','user:edit']" type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button v-permission="['admin','system:user:edit']" type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <el-button v-if="row.userId !== 1" v-permission="['admin','user:del']" type="danger" size="mini" @click="handleDelete(row)">
+          <el-button v-if="row.userId !== 1" v-permission="['admin','system:user:del']" type="danger" size="mini" @click="handleDelete(row)">
             删除
           </el-button>
         </template>
@@ -53,7 +53,7 @@
 import Pagination from '@/components/Pagination'
 import Edit from './edit'
 import { getList, delUser, updateUserStatus } from '@/api/user'
-import { getDictOptions } from '@/api/dict'
+// import { getDictOptions } from '@/api/dict'
 import checkPermission from '@/utils/permission'
 
 export default {
@@ -87,9 +87,9 @@ export default {
   },
   created() {
     this.getList()
-    getDictOptions('userStatus').then(res => {
-      this.statusOptions = res.data
-    })
+    // getDictOptions('userStatus').then(res => {
+    //   this.statusOptions = res.data
+    // })
   },
   methods: {
     checkPermission,
@@ -97,7 +97,7 @@ export default {
     getList() {
       this.loading = true
       getList(this.queryParams).then(res => {
-        this.data = res.data.data
+        this.data = res.data.records
         this.total = res.data.total
         this.loading = false
       })
@@ -129,8 +129,9 @@ export default {
     /** 用户状态修改 */
     handleStatusChange(row) {
       const currentStatus = row.status
+      debugger
       row.status = row.status === 1 ? 0 : 1
-      const text = currentStatus === 1 ? '启用' : '停用'
+      const text = currentStatus === 0 ? '启用' : '停用'
 
       this.$confirm('是否"' + text + '" 用户吗?', '警告', {
         confirmButtonText: '确定',
