@@ -47,8 +47,7 @@ const actions = {
       getInfo().then(res => {
         const data = res.data
         const user = data.user
-        const avatar = user.avatar == null
-          ? require('@/assets/image/profile.jpg') : process.env.VUE_APP_BASE_API + '/avatar/' + user.avatar
+        const avatar = user.avatar ? process.env.VUE_APP_BASE_API + '/avatar/' + user.avatar : require('@/assets/image/profile.jpg')
         if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
           commit('SET_ROLES', data.roles)
           commit('SET_PERMISSIONS', data.permissions)
