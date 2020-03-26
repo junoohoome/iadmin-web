@@ -9,23 +9,11 @@ export function login(username, password, code, uuid) {
   })
 }
 
-// 获取用户详细信息
-export function getInfo(token) {
-  return request({
-    url: '/user/info',
-    method: 'get',
-    params: { token }
-  })
-}
-
 // 退出方法
-export function logout(token) {
+export function logout() {
   return request({
     url: '/auth/logout',
-    method: 'post',
-    params: {
-      token: token
-    }
+    method: 'delete'
   })
 }
 
@@ -37,6 +25,16 @@ export function getCodeImg() {
   })
 }
 
+// 获取用户详细信息
+export function getInfo(token) {
+  return request({
+    url: '/user/info',
+    method: 'get',
+    params: { token }
+  })
+}
+
+// 获取菜单路由
 export function buildRoute() {
   return request({
     url: '/getRouters',

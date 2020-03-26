@@ -23,7 +23,7 @@
       <el-table-column label="用户名称" prop="nickName" align="center" />
       <el-table-column label="手机号码" prop="mobile" />
       <el-table-column label="用户邮箱" prop="email" align="center" />
-<!--      <el-table-column label="角色" prop="roleNames" align="center" />-->
+      <el-table-column label="角色" prop="roles" align="center" />
       <el-table-column label="状态" prop="status" align="center" width="110">
         <template slot-scope="{row}">
           <el-switch v-model="row.status" :active-value="0" :inactive-value="1" @change="handleStatusChange(row)" />

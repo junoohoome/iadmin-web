@@ -39,6 +39,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { removeToken } from '@/utils/auth'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import Screenfull from '@/components/Screenfull'
@@ -77,6 +78,7 @@ export default {
     },
     async logout() {
       await this.$store.dispatch('user/logout')
+      removeToken()
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     }
   }
