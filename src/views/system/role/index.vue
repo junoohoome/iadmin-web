@@ -5,7 +5,14 @@
     <!--工具栏-->
     <div class="filter-container">
       <!-- 搜索 -->
-      <el-input v-model="queryParams.roleName" clearable placeholder="输入名称搜索" style="width: 200px;" class="filter-item" @keyup.enter.native="handleQuery" />
+      <el-input
+        v-model="queryParams.roleName"
+        clearable
+        placeholder="输入名称搜索"
+        style="width: 200px;"
+        class="filter-item"
+        @keyup.enter.native="handleQuery"
+      />
       <el-button class="filter-item" type="success" icon="el-icon-search" @click="handleQuery">搜索</el-button>
       <!-- 新增 -->
       <div v-permission="['admin','role:add']" style="display: inline-block;margin: 0px 2px;">
@@ -14,7 +21,8 @@
           type="primary"
           icon="el-icon-plus"
           @click="add"
-        >新增</el-button>
+        >新增
+        </el-button>
       </div>
     </div>
     <el-row :gutter="15">
@@ -24,13 +32,31 @@
           <div slot="header" class="clearfix">
             <span class="role-span">角色列表</span>
           </div>
-          <el-table v-loading="loading" :data="data" highlight-current-row style="width: 100%;" @current-change="handleCurrentChange">
-            <el-table-column prop="roleName" label="名称" />
-            <el-table-column prop="permissions" label="角色权限" />
-            <el-table-column :show-overflow-tooltip="true" prop="description" label="描述" />
-            <el-table-column v-if="checkPermission(['admin','roles:edit','roles:del'])" label="操作" width="150px" align="center" fixed="right">
+          <el-table
+            v-loading="loading"
+            :data="data"
+            highlight-current-row
+            style="width: 100%;"
+            @current-change="handleCurrentChange"
+          >
+            <el-table-column prop="roleName" label="角色名称" />
+            <el-table-column prop="roleKey" label="权限字符" />
+            <el-table-column :show-overflow-tooltip="true" prop="remark" label="描述" />
+            <el-table-column
+              v-if="checkPermission(['admin','roles:edit','roles:del'])"
+              label="操作"
+              width="150px"
+              align="center"
+              fixed="right"
+            >
               <template slot-scope="scope">
-                <el-button v-if="scope.row.id !== 'superadmin'" v-permission="['admin','role:edit']" type="primary" size="mini" @click="edit(scope.row)">
+                <el-button
+                  v-if="scope.row.roleId !== 'superadmin'"
+                  v-permission="['admin','role:edit']"
+                  type="primary"
+                  size="mini"
+                  @click="edit(scope.row)"
+                >
                   编辑
                 </el-button>
                 <el-popover
@@ -42,7 +68,8 @@
                   <p>确定删除本条数据吗？</p>
                   <div style="text-align: right; margin: 0">
                     <el-button type="text" size="mini" @click="$refs[scope.row.id].doClose()">取消</el-button>
-                    <el-button :loading="delLoading" type="primary" size="mini" @click="subDelete(scope.row.id)">确定</el-button>
+                    <el-button :loading="delLoading" type="primary" size="mini" @click="subDelete(scope.row.id)">确定
+                    </el-button>
                   </div>
                   <el-button v-if="scope.row.id !== 'superadmin'" slot="reference" type="danger" size="mini">
                     删除
@@ -76,7 +103,8 @@
               style="float: right; padding: 6px 9px"
               type="primary"
               @click="saveMenu"
-            >保存</el-button>
+            >保存
+            </el-button>
           </div>
           <el-tree
             ref="menu"
@@ -98,9 +126,9 @@
 import Edit from './edit'
 import Pagination from '@/components/Pagination'
 import checkPermission from '@/utils/permission'
-import { listRoles, updatePermissions, del } from '@/api/role'
+import { listRoles, updatePermissions, del, getMenuIdsByRoleId } from '@/api/role'
 import { getMenusTree } from '@/api/menu'
-import { parseTime } from '@/utils/index'
+import { parseTime } from '@/utils'
 
 export default {
   components: {
@@ -115,7 +143,7 @@ export default {
       queryParams: {
         page: 1,
         limit: 10,
-        roleName: ''
+        roleName: null
       },
       isAdd: false, // 是否新增，true: 新增  false: 编辑
       delLoading: false,
@@ -140,7 +168,7 @@ export default {
     getList() {
       this.loading = true
       listRoles(this.queryParams).then(response => {
-        this.data = response.data.data
+        this.data = response.data.records
         this.total = response.data.total
         this.loading = false
       })
@@ -187,22 +215,27 @@ export default {
         // 清空菜单的选中
         _this.$refs.menu.setCheckedKeys([])
         // 保存当前的角色id
-        _this.currentRoleId = row.id
-        // if (this.currentRoleId === 'superadmin') {
-        //   _this.$refs.menu.setCheckedNodes(_this.menus)
-        //   return
-        // }
+        _this.currentRoleId = row.roleId
+        if (_this.currentRoleId === 'superadmin') {
+          _this.$refs.menu.setCheckedNodes(_this.menus)
+          return
+        }
 
         // 激活保存按钮
         _this.showButton = true
         // 初始化
-        _this.menuIds = []
-        if (row.menuIds && row.menuIds.length > 0) {
-          row.menuIds.split(',').forEach(item => {
-            _this.menuIds.push(item)
-          })
-        }
+        _this.menuIds = _this.getMenuIds(row.roleId)
+        // if (row.menuIds && row.menuIds.length > 0) {
+        // .forEach(item => {
+        //    _this.menuIds.push(item)
+        //  })
+        // }
       }
+    },
+    getMenuIds(roleId) {
+      getMenuIdsByRoleId(roleId).then(res => {
+        this.menuIds = res.data
+      })
     },
     getMenus() {
       getMenusTree().then(res => {
@@ -255,13 +288,14 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss">
   .role-span {
-    font-weight: bold;color: #303133;
+    font-weight: bold;
+    color: #303133;
     font-size: 15px;
   }
 </style>
 
 <style scoped>
-  /deep/ .el-tree-node__label{
+  /deep/ .el-tree-node__label {
     margin-left: 5px;
   }
 </style>

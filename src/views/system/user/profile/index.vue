@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-row :gutter="20">
-      <el-col :span="6" :xs="24">
+      <el-col :span="12" :xs="24">
         <el-card class="box-card">
           <div slot="header" class="clearfix">
             <span>个人信息</span>
@@ -34,13 +34,13 @@
               <li class="list-group-item">
                 <svg-icon icon-class="date" />
                 创建日期
-                <div class="pull-right">{{ user.createTimeText }}</div>
+                <div class="pull-right">{{ user.createTime }}</div>
               </li>
             </ul>
           </div>
         </el-card>
       </el-col>
-      <el-col :span="18" :xs="24">
+      <el-col :span="12" :xs="24">
         <el-card>
           <div slot="header" class="clearfix">
             <span>基本资料</span>

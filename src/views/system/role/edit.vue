@@ -4,11 +4,11 @@
       <el-form-item label="角色名称" prop="roleName">
         <el-input v-model="form.roleName" style="width: 145px;" />
       </el-form-item>
-      <el-form-item label="角色权限" prop="permissions">
-        <el-input v-model="form.permissions" style="width: 145px;" />
+      <el-form-item label="角色权限" prop="roleKey">
+        <el-input v-model="form.roleKey" style="width: 145px;" />
       </el-form-item>
-      <el-form-item label="描述信息" prop="description">
-        <el-input v-model="form.description" style="width: 380px;" rows="5" type="textarea" />
+      <el-form-item label="描述信息" prop="remark">
+        <el-input v-model="form.remark" style="width: 380px;" rows="5" type="textarea" />
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -38,11 +38,11 @@ export default {
           { required: true, message: '请输入名称', trigger: 'blur' },
           { min: 4, max: 16, message: '长度在4-16个字符以内', trigger: 'change' }
         ],
-        permissions: [
+        roleKey: [
           { required: true, message: '请输入权限', trigger: 'blur' },
           { min: 4, max: 16, message: '长度在4-16个字符以内', trigger: 'change' }
         ],
-        description: [{ max: 120, message: '长度在120个字符以内', trigger: 'change' }]
+        remark: [{ max: 120, message: '长度在120个字符以内', trigger: 'change' }]
       }
     }
   },
@@ -86,8 +86,8 @@ export default {
       edit(this.form).then(res => {
         if (res.code === 200) {
           const data = this.$parent.data
-          const index = data.findIndex((item) => item.id === res.data.id)
-          data.splice(index, 1, res.data)
+          const index = data.findIndex((item) => item.roleId === this.form.roleId)
+          data.splice(index, 1, this.form)
           this.resetForm()
           this.$notify({
             title: '修改成功',
@@ -112,10 +112,10 @@ export default {
         data = {}
       }
       this.form = {
-        id: data.id,
+        roleId: data.roleId,
         roleName: data.roleName,
-        description: data.description,
-        permissions: data.permissions
+        remark: data.remark,
+        roleKey: data.roleKey
       }
     },
     resetForm() {

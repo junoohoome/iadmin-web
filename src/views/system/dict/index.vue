@@ -14,33 +14,54 @@
               type="primary"
               icon="el-icon-plus"
               @click="add"
-            >新增</el-button>
+            >新增
+            </el-button>
           </div>
           <!--工具栏-->
           <div class="filter-container">
             <!-- 搜索 -->
-            <el-input v-model="queryParams.disc" clearable placeholder="输入名称或者描述搜索" style="width: 200px;" class="filter-item" @keyup.enter.native="handleQuery" />
+            <el-input
+              v-model="queryParams.dictName"
+              clearable
+              placeholder="输入字典名称"
+              style="width: 200px;"
+              class="filter-item"
+              @keyup.enter.native="handleQuery"
+            />
             <el-button class="filter-item" type="success" icon="el-icon-search" @click="handleQuery">搜索</el-button>
           </div>
           <!--表格渲染-->
-          <el-table v-loading="loading" :data="data" highlight-current-row style="width: 100%;" @current-change="handleCurrentChange">
-            <el-table-column :show-overflow-tooltip="true" prop="dictName" label="名称" />
+          <el-table
+            v-loading="loading"
+            :data="data"
+            highlight-current-row
+            style="width: 100%;"
+            @current-change="handleCurrentChange"
+          >
+            <el-table-column :show-overflow-tooltip="true" prop="dictName" label="字典名称" />
+            <el-table-column :show-overflow-tooltip="true" prop="dictType" label="字典类型" />
             <el-table-column :show-overflow-tooltip="true" prop="remark" label="描述" />
-            <el-table-column v-if="checkPermission(['admin','dict:edit','dict:del'])" label="操作" width="150px" align="center" fixed="right">
+            <el-table-column
+              v-if="checkPermission(['admin','dict:edit','dict:del'])"
+              label="操作"
+              width="150px"
+              align="center"
+              fixed="right"
+            >
               <template slot-scope="scope">
                 <el-button v-permission="['admin','dict:edit']" type="primary" size="mini" @click="edit(scope.row)">
                   编辑
                 </el-button>
                 <el-popover
-                  :ref="scope.row.id"
+                  :ref="scope.row.dictId"
                   v-permission="['admin','dict:del']"
                   placement="top"
                   width="180"
                 >
                   <p>此操作将删除字典与对应的字典详情，确定要删除吗？</p>
                   <div style="text-align: right; margin: 0">
-                    <el-button type="text" @click="$refs[scope.row.id].doClose()">取消</el-button>
-                    <el-button :loading="delLoading" type="primary" @click="subDelete(scope.row.id)">确定</el-button>
+                    <el-button type="text" @click="$refs[scope.row.dictId].doClose()">取消</el-button>
+                    <el-button :loading="delLoading" type="primary" @click="subDelete(scope.row.dictId)">确定</el-button>
                   </div>
                   <el-button slot="reference" type="danger" size="mini">
                     删除
@@ -70,8 +91,9 @@
               style="float: right;padding: 4px 10px"
               type="primary"
               icon="el-icon-plus"
-              @click="$refs.dictDetail.$refs.form.dialog = true;$refs.dictDetail.isAdd = true"
-            >新增</el-button>
+              @click="$refs.dictDetail.$refs.form.dialog = true,$refs.dictDetail.isAdd = true"
+            >新增
+            </el-button>
           </div>
           <dict-detail ref="dictDetail" />
         </el-card>
@@ -102,7 +124,7 @@ export default {
       queryParams: {
         page: 1,
         limit: 10,
-        disc: ''
+        dictName: null
       },
       isAdd: false, // 判断是否为添加、true: 添加  false：编辑
       delLoading: false, // 删除加载
@@ -118,18 +140,17 @@ export default {
     getList() {
       this.loading = true
       listDicts(this.queryParams).then(res => {
-        this.data = res.data.data
+        this.data = res.data.records
         this.total = res.data.total
         this.loading = false
       })
     },
     // 删除
-    subDelete(id) {
+    subDelete(dictId) {
       this.delLoading = true
-      del(id).then(res => {
+      del(dictId).then(res => {
         this.delLoading = false
-        this.$refs[id].doClose()
-        this.dleChangePage()
+        this.$refs[dictId].doClose()
         this.getList()
         this.$notify({
           title: '删除成功',
@@ -138,8 +159,7 @@ export default {
         })
       }).catch(err => {
         this.delLoading = false
-        this.$refs[id].doClose()
-        console.log(err.response.data.message)
+        this.$refs[dictId].doClose()
       })
     },
     add() {
@@ -158,7 +178,7 @@ export default {
     handleCurrentChange(row) {
       if (row) {
         this.hasDetail = true
-        this.$refs.dictDetail.dictId = row.id
+        this.$refs.dictDetail.dictType = row.dictType
         this.$refs.dictDetail.dictName = row.dictName
         this.$refs.dictDetail.getList()
       }

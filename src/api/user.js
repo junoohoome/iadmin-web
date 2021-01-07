@@ -28,7 +28,7 @@ export function updateUser(data) {
 
 export function updateUserStatus(id, status) {
   return request({
-    url: '/user/update/status',
+    url: '/sysUser/update/status',
     method: 'put',
     params: {
       id: id,
@@ -48,7 +48,7 @@ export function delUser(idList) {
 // 查询用户个人信息
 export function getUserProfile() {
   return request({
-    url: '/user/profile',
+    url: '/sysUser/profile',
     method: 'get'
   })
 }
@@ -56,7 +56,7 @@ export function getUserProfile() {
 // 修改用户个人信息
 export function updateUserProfile(data) {
   return request({
-    url: '/user/profile',
+    url: '/sysUser/profile',
     method: 'put',
     data: data
   })
@@ -69,7 +69,7 @@ export function updateUserPwd(oldPassword, newPassword) {
     newPassword
   }
   return request({
-    url: '/user/profile/updatePwd',
+    url: '/sysUser/profile/updatePwd',
     method: 'put',
     params: data
   })

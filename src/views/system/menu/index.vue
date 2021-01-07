@@ -32,7 +32,7 @@
       :data="menuList"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
       :default-expand-all="expand"
-      row-key="id"
+      row-key="menuId"
     >
       <el-table-column :show-overflow-tooltip="true" label="菜单名称" prop="menuName" />
       <el-table-column prop="icon" label="图标">
@@ -41,17 +41,17 @@
         </template>
       </el-table-column>
       <el-table-column :show-overflow-tooltip="true" prop="path" label="路由地址" />
-      <el-table-column :show-overflow-tooltip="true" prop="permission" label="权限标识" />
-      <el-table-column :show-overflow-tooltip="true" prop="componentPath" label="组件路径" />
-      <el-table-column prop="iframe" label="外链">
+      <el-table-column :show-overflow-tooltip="true" prop="perms" label="权限标识" />
+      <el-table-column :show-overflow-tooltip="true" prop="component" label="组件路径" />
+      <el-table-column prop="isFrame" label="外链">
         <template slot-scope="scope">
-          <span v-if="scope.row.iframe">是</span>
+          <span v-if="scope.row.isFrame === 0">是</span>
           <span v-else>否</span>
         </template>
       </el-table-column>
-      <el-table-column prop="iframe" label="可见">
+      <el-table-column label="可见">
         <template slot-scope="scope">
-          <span v-if="scope.row.hidden">否</span>
+          <span v-if="scope.row.visible === '1'">否</span>
           <span v-else>是</span>
         </template>
       </el-table-column>
@@ -69,8 +69,8 @@
           <el-popover :ref="scope.row.id" v-permission="['admin','menu:del']" placement="top" width="200">
             <p>确定删除吗,如果存在下级节点则一并删除，此操作不能撤销！</p>
             <div style="text-align: right; margin: 0">
-              <el-button size="mini" type="text" @click="$refs[scope.row.id].doClose()">取消</el-button>
-              <el-button :loading="delLoading" type="primary" size="mini" @click="handelDelete(scope.row.id)">确定
+              <el-button size="mini" type="text" @click="$refs[scope.row.menuId].doClose()">取消</el-button>
+              <el-button :loading="delLoading" type="primary" size="mini" @click="handelDelete(scope.row.menuId)">确定
               </el-button>
             </div>
             <el-button slot="reference" type="danger" size="mini">
@@ -102,8 +102,7 @@ export default {
       menuList: [],
       // 查询参数
       queryParams: {
-        menuName: undefined,
-        visible: undefined
+        menuName: ''
       }
     }
   },
@@ -137,21 +136,22 @@ export default {
       const _this = this.$refs.form
       _this.getMenus()
       _this.form = {
-        id: data.id,
-        componentPath: data.componentPath,
+        menuId: data.menuId,
+        component: data.component,
         componentName: data.componentName,
         menuName: data.menuName,
         sort: data.sort,
-        pid: data.pid,
+        parentId: data.parentId,
         path: data.path,
-        iframe: data.iframe.toString(),
+        isFrame: data.isFrame.toString(),
         roles: [],
         icon: data.icon,
         cache: data.cache,
-        hidden: data.hidden,
-        type: data.type.toString(),
-        permission: data.permission
+        visible: data.visible,
+        menuType: data.menuType,
+        perms: data.perms
       }
+      console.log(_this.form)
       _this.dialog = true
     },
     /** 删除按钮操作 */
@@ -160,12 +160,14 @@ export default {
       del(id).then(res => {
         this.delLoading = false
         this.$refs[id].doClose()
-        this.getList()
-        this.$notify({
-          title: '删除成功',
-          type: 'success',
-          duration: 2500
-        })
+        if (res.code === 200) {
+          this.getList()
+          this.$notify({
+            title: '删除成功',
+            type: 'success',
+            duration: 2500
+          })
+        }
       }).catch(err => {
         this.delLoading = false
         this.$refs[id].doClose()

@@ -5,16 +5,19 @@
     </div>
     <div v-else>
       <!--表单组件-->
-      <edit ref="form" :is-add="isAdd" :dict-id="dictId" />
+      <edit ref="form" :is-add="isAdd" :dict-type="dictType" />
       <!--表格渲染-->
       <el-table v-loading="loading" :data="data" style="width: 100%;">
-        <el-table-column label="所属字典">
+        <el-table-column label="字典类型">
           <template>
-            {{ dictName }}
+            {{ dictType }}
           </template>
         </el-table-column>
-        <el-table-column prop="label" label="字典标签" />
-        <el-table-column prop="value" label="字典值" />
+        <el-table-column prop="dictLabel" label="字典标签" />
+        <el-table-column prop="dictValue" label="字典值" />
+        <el-table-column prop="status" label="状态" />
+        <el-table-column prop="dictSort" label="排序" />
+        <el-table-column prop="remark" label="描述" />
         <el-table-column v-if="checkPermission(['admin','dict:edit','dict:del'])" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <el-button v-permission="['admin','dict:edit']" type="primary" size="mini" @click="edit(scope.row)">
@@ -44,7 +47,7 @@
 
 <script>
 import Edit from './edit'
-import { del, fetchDetailList } from '@/api/dict'
+import { del, fetchDetailList } from '@/api/dict-detail'
 import checkPermission from '@/utils/permission'
 
 export default {
@@ -53,7 +56,7 @@ export default {
   },
   data() {
     return {
-      dictId: '',
+      dictType: '',
       dictName: '',
       loading: false, // 列表数据加载
       data: [], // 列表数据
@@ -65,8 +68,7 @@ export default {
     checkPermission,
     getList() {
       this.loading = true
-      fetchDetailList(this.dictId).then(res => {
-        console.log('字典详情：', res.data)
+      fetchDetailList(this.dictType).then(res => {
         this.data = res.data
         this.loading = false
       })
@@ -76,8 +78,8 @@ export default {
       del(id).then(res => {
         this.delLoading = false
         this.$refs[id].doClose()
-        this.dleChangePage()
-        this.init()
+        // this.dleChangePage()
+        this.getList()
         this.$notify({
           title: '删除成功',
           type: 'success',
@@ -86,7 +88,6 @@ export default {
       }).catch(err => {
         this.delLoading = false
         this.$refs[id].doClose()
-        console.log(err.response.data.message)
       })
     },
     edit(data) {
@@ -94,9 +95,12 @@ export default {
       const _this = this.$refs.form
       _this.form = {
         id: data.id,
-        label: data.label,
-        value: data.value,
-        sort: data.sort
+        dictType: data.dictType,
+        dictLabel: data.dictLabel,
+        dictValue: data.dictValue,
+        status: data.status,
+        remark: data.remark,
+        dictSort: data.dictSort
       }
       _this.dialog = true
     },

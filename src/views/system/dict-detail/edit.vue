@@ -1,14 +1,33 @@
 <template>
-  <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增字典详情' : '编辑字典详情'" width="500px">
+  <el-dialog
+    :append-to-body="true"
+    :close-on-click-modal="false"
+    :before-close="cancel"
+    :visible.sync="dialog"
+    :title="isAdd ? '新增字典详情' : '编辑字典详情'"
+    width="500px"
+  >
     <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
-      <el-form-item label="字典标签" prop="label">
-        <el-input v-model="form.label" style="width: 370px;" />
+      <el-form-item label="字典标签" prop="dictLabel">
+        <el-input v-model="form.dictLabel" style="width: 370px;" />
       </el-form-item>
-      <el-form-item label="字典值">
-        <el-input v-model="form.value" style="width: 370px;" />
+      <el-form-item label="字典值" prop="dictValue">
+        <el-input v-model="form.dictValue" style="width: 370px;" />
       </el-form-item>
-      <el-form-item label="排序" prop="sort">
-        <el-input-number v-model.number="form.sort" :min="0" :max="999" controls-position="right" style="width: 370px;" />
+      <el-form-item label="状态" prop="status">
+        <el-input-number v-model.number="form.status" />
+      </el-form-item>
+      <el-form-item label="描述" prop="remark">
+        <el-input v-model="form.remark" />
+      </el-form-item>
+      <el-form-item label="排序" prop="dictSort">
+        <el-input-number
+          v-model.number="form.dictSort"
+          :min="0"
+          :max="999"
+          controls-position="right"
+          style="width: 370px;"
+        />
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -19,14 +38,15 @@
 </template>
 
 <script>
-import { submitDictDetail } from '@/api/dict'
+import { add, edit } from '@/api/dict-detail'
+
 export default {
   props: {
     isAdd: {
       type: Boolean,
       required: true
     },
-    dictId: {
+    dictType: {
       type: String,
       required: true
     }
@@ -36,10 +56,12 @@ export default {
       loading: false, dialog: false,
       form: {
         id: '',
-        label: '',
-        dictId: '',
-        value: '',
-        sort: 999
+        dictLabel: '',
+        dictType: '',
+        dictValue: '',
+        status: '',
+        dictSort: 1,
+        remark: ''
       },
       rules: {
         label: [
@@ -59,7 +81,7 @@ export default {
       this.$refs['form'].validate((valid) => {
         if (valid) {
           this.loading = true
-          this.form.dictId = this.dictId
+          this.form.dictType = this.dictType
           if (this.isAdd) {
             this.doAdd()
           } else {
@@ -69,22 +91,16 @@ export default {
       })
     },
     doAdd() {
-      submitDictDetail(this.form).then(res => {
+      add(this.form).then(res => {
         if (res.code === 200) {
-          this.resetForm()
           this.$notify({
             title: '添加成功',
             type: 'success',
             duration: 2500
           })
-          console.log('新增字典详情：', res.data)
-          this.$parent.data.push(res.data)
-        } else {
-          this.$notify({
-            title: res.msg,
-            type: 'error',
-            duration: 2500
-          })
+          // this.$parent.data.push(this.form)
+          this.$parent.getList()
+          this.resetForm()
         }
         this.loading = false
       }).catch(err => {
@@ -93,21 +109,15 @@ export default {
       })
     },
     doEdit() {
-      submitDictDetail(this.form).then(res => {
+      edit(this.form).then(res => {
         if (res.code === 200) {
-          this.resetForm()
           const data = this.$parent.data
-          const index = data.findIndex((item) => item.id === res.data.id)
-          data.splice(index, 1, res.data)
+          const index = data.findIndex((item) => item.id === this.form.id)
+          data.splice(index, 1, this.form)
+          this.resetForm()
           this.$notify({
             title: '修改成功',
             type: 'success',
-            duration: 2500
-          })
-        } else {
-          this.$notify({
-            title: res.msg,
-            type: 'error',
             duration: 2500
           })
         }
@@ -122,10 +132,12 @@ export default {
       this.$refs['form'].resetFields()
       this.form = {
         id: '',
-        dictId: '',
-        label: '',
-        value: '',
-        sort: '999'
+        dictType: '',
+        dictLabel: '',
+        dictValue: '',
+        status: '',
+        remark: '',
+        dictSort: '999'
       }
     }
   }

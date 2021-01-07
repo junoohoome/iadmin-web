@@ -1,11 +1,21 @@
 <template>
-  <el-dialog :append-to-body="true" :close-on-click-modal="false" :before-close="cancel" :visible.sync="dialog" :title="isAdd ? '新增字典' : '编辑字典'" width="500px">
+  <el-dialog
+    :append-to-body="true"
+    :close-on-click-modal="false"
+    :before-close="cancel"
+    :visible.sync="dialog"
+    :title="isAdd ? '新增字典' : '编辑字典'"
+    width="500px"
+  >
     <el-form ref="form" :model="form" :rules="rules" label-width="80px">
       <el-form-item label="字典名称" prop="dictName">
-        <el-input v-model="form.dictName" style="width: 370px;"/>
+        <el-input v-model="form.dictName" style="width: 370px;" />
+      </el-form-item>
+      <el-form-item label="字典类型" prop="dictType">
+        <el-input v-model="form.dictType" style="width: 370px;" />
       </el-form-item>
       <el-form-item label="描述">
-        <el-input v-model="form.remark" style="width: 370px;"/>
+        <el-input v-model="form.remark" style="width: 370px;" />
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -16,7 +26,8 @@
 </template>
 
 <script>
-import { submitDict } from '@/api/dict'
+import { add, edit } from '@/api/dict'
+
 export default {
   props: {
     isAdd: {
@@ -29,14 +40,14 @@ export default {
       loading: false,
       dialog: false,
       form: {
-        id: '',
+        dictId: '',
         dictName: '',
+        dictType: '',
         remark: ''
       },
       rules: {
-        dictName: [
-          { required: true, message: '请输入名称', trigger: 'blur' }
-        ]
+        dictName: [{ required: true, message: '请输入字典名称', trigger: 'blur' }],
+        dictType: [{ required: true, message: '请输入字典类型', trigger: 'blur' }]
       }
     }
   },
@@ -57,7 +68,7 @@ export default {
       })
     },
     doAdd() {
-      submitDict(this.form).then(res => {
+      add(this.form).then(res => {
         this.loading = false
         if (res.code === 200) {
           this.resetForm()
@@ -67,34 +78,32 @@ export default {
             duration: 2500
           })
           this.$parent.getList()
-        } else {
-          this.$notify({
-            title: '添加失败',
-            type: 'error',
-            duration: 2500
-          })
         }
       }).catch(err => {
         this.loading = false
-        console.log(err.response.data.message)
+        console.log(err)
       })
     },
     doEdit() {
-      submitDict(this.form).then(res => {
+      console.info('1: ', this.form)
+      edit(this.form).then(res => {
         if (res.code === 200) {
-          this.resetForm()
+          console.info('2: ', this.form)
           const data = this.$parent.data
-          const index = data.findIndex((item) => item.id === res.data.id)
-          data.splice(index, 1, res.data)
+          const _form = this.form
+          const index = data.findIndex(item => item.dictId === this.form.dictId)
+          data.splice(index, 1, {
+            dictId: _form.dictId,
+            dictName: _form.dictName,
+            dictType: _form.dictType,
+            remark: _form.remark
+          })
+
+          console.info(data)
+          this.resetForm()
           this.$notify({
             title: '修改成功',
             type: 'success',
-            duration: 2500
-          })
-        } else {
-          this.$notify({
-            title: '修改失败',
-            type: 'error',
             duration: 2500
           })
         }
@@ -105,12 +114,10 @@ export default {
       })
     },
     initForm(data) {
-      if (!data) {
-        data = {}
-      }
       this.form = {
-        id: data.id,
+        dictId: data.dictId,
         dictName: data.dictName,
+        dictType: data.dictType,
         remark: data.remark
       }
     },
@@ -118,8 +125,9 @@ export default {
       this.dialog = false
       this.$refs['form'].resetFields()
       this.form = {
-        id: '',
+        dictId: '',
         dictName: '',
+        dictType: '',
         remark: ''
       }
     }

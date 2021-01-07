@@ -58,7 +58,9 @@ export const filterAsyncRouter = (routers) => {
  * @returns {function(): (Promise<*>|*)}
  */
 export const loadView = (view) => {
-  return () => import(`@/views/${view}`)
+  // return () => import(`@/views/${view}`) //动态路由报错 cannot find module
+  return (resolve) => require([`@/views/${view}`], resolve)
+
 }
 
 export default {

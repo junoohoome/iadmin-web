@@ -4,7 +4,7 @@
     <div class="filter-container">
       <el-input v-model="queryParams.account" clearable placeholder="请输入用户账号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleQuery" />
       <el-select v-model="queryParams.status" clearable placeholder="请输入状态" class="filter-item" style="width: 130px">
-        <el-option v-for="item in statusOptions" :key="item.value" :label="item.text" :value="item.value" />
+        <el-option v-for="item in statusOptions" :key="item.dictValue" :label="item.dictLabel" :value="item.dictValue" />
       </el-select>
       <el-button class="filter-item" type="success" icon="el-icon-search" @click="handleQuery">
         搜索
@@ -23,10 +23,16 @@
       <el-table-column label="用户名称" prop="nickName" align="center" />
       <el-table-column label="手机号码" prop="mobile" />
       <el-table-column label="用户邮箱" prop="email" align="center" />
-      <el-table-column label="角色" prop="roles" align="center" />
-      <el-table-column label="状态" prop="status" align="center" width="110">
+      <el-table-column label="角色" align="center">
         <template slot-scope="{row}">
-          <el-switch v-model="row.status" :active-value="0" :inactive-value="1" @change="handleStatusChange(row)" />
+          <el-tag v-for="item in row.roles" :key="item" style="margin-left: 5px">
+            {{ item.roleName }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="状态" align="center" width="110">
+        <template slot-scope="{row}">
+          <el-switch v-model="row.status" :active-value="'0'" :inactive-value="'1'" @change="handleStatusChange(row)" />
         </template>
       </el-table-column>
       <el-table-column v-if="checkPermission(['admin','system:user:edit', 'system:user:del'])" label="操作" width="300px" align="center">
@@ -53,7 +59,7 @@
 import Pagination from '@/components/Pagination'
 import Edit from './edit'
 import { getList, delUser, updateUserStatus } from '@/api/user'
-// import { getDictOptions } from '@/api/dict'
+import { fetchDetailList } from '@/api/dict-detail'
 import checkPermission from '@/utils/permission'
 
 export default {
@@ -87,9 +93,9 @@ export default {
   },
   created() {
     this.getList()
-    // getDictOptions('userStatus').then(res => {
-    //   this.statusOptions = res.data
-    // })
+    fetchDetailList('sys_user_status').then(res => {
+      this.statusOptions = res.data
+    })
   },
   methods: {
     checkPermission,
@@ -129,16 +135,14 @@ export default {
     /** 用户状态修改 */
     handleStatusChange(row) {
       const currentStatus = row.status
-      debugger
-      row.status = row.status === 1 ? 0 : 1
-      const text = currentStatus === 0 ? '启用' : '停用'
-
+      row.status = row.status === '1' ? '0' : '1' // 手动修改状态取反
+      const text = currentStatus === '0' ? '启用' : '停用'
       this.$confirm('是否"' + text + '" 用户吗?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(function() {
-        return updateUserStatus(row.id, currentStatus)
+        return updateUserStatus(row.userId, currentStatus)
       }).then(res => {
         if (res.code === 200) {
           row.status = currentStatus

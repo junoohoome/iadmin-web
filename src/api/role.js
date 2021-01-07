@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function listRoles(params) {
   return request({
-    url: '/role/list',
+    url: '/sysRole',
     method: 'get',
     params
   })
@@ -10,14 +10,14 @@ export function listRoles(params) {
 
 export function getRoleOptions() {
   return request({
-    url: '/role/options',
+    url: '/sysRole/selectOptions',
     method: 'get'
   })
 }
 
 export function add(data) {
   return request({
-    url: '/role',
+    url: '/sysRole',
     method: 'post',
     data
   })
@@ -25,7 +25,7 @@ export function add(data) {
 
 export function edit(data) {
   return request({
-    url: '/role',
+    url: '/sysRole',
     method: 'put',
     data
   })
@@ -33,7 +33,7 @@ export function edit(data) {
 
 export function updatePermissions(params) {
   return request({
-    url: '/role/update/permissions',
+    url: '/sysRole/update/permissions',
     method: 'put',
     params
   })
@@ -41,7 +41,15 @@ export function updatePermissions(params) {
 
 export function del(id) {
   return request({
-    url: '/role/' + id,
+    url: '/sysRole/' + id,
     method: 'delete'
+  })
+}
+
+export function getMenuIdsByRoleId(roleId) {
+  return request({
+    url: '/sysRole/selectMenuIds',
+    method: 'get',
+    params: { roleId: roleId }
   })
 }
