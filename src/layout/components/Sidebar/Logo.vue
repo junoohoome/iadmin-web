@@ -1,27 +1,29 @@
 <template>
-  <div class="sidebar-logo-container" :class="{'collapse':collapse}">
+  <div class="sidebar-logo-container" :class="{ collapse }">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo">
-        <h1 v-else class="sidebar-title">{{ title }} </h1>
+        <img v-if="logo" :src="logo" class="sidebar-logo" alt="logo" />
+        <h1 v-else class="sidebar-title">{{ title }}</h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo">
-        <h1 class="sidebar-title">{{ title }} </h1>
+        <img v-if="logo" :src="logo" class="sidebar-logo" alt="logo" />
+        <h1 class="sidebar-title">{{ title }}</h1>
       </router-link>
     </transition>
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+interface Props {
+  collapse: boolean
+}
+
+defineProps<Props>()
+</script>
+
+<script lang="ts">
 export default {
   name: 'SidebarLogo',
-  props: {
-    collapse: {
-      type: Boolean,
-      required: true
-    }
-  },
   data() {
     return {
       title: 'IAdmin后台管理',
@@ -50,32 +52,41 @@ export default {
   text-align: center;
   overflow: hidden;
 
-  & .sidebar-logo-link {
+  .sidebar-logo-link {
     height: 100%;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
 
-    & .sidebar-logo {
+    .sidebar-logo {
       width: 32px;
       height: 32px;
       vertical-align: middle;
       margin-right: 12px;
     }
 
-    & .sidebar-title {
+    .sidebar-title {
       display: inline-block;
       margin: 0;
       color: #fff;
       font-weight: 600;
       line-height: 50px;
       font-size: 14px;
-      font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
+      font-family:
+        Avenir,
+        Helvetica Neue,
+        Arial,
+        Helvetica,
+        sans-serif;
       vertical-align: middle;
     }
   }
 
   &.collapse {
     .sidebar-logo {
-      margin-right: 0px;
+      margin-right: 0;
     }
   }
 }

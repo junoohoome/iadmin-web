@@ -12,82 +12,83 @@
       accept="image/jpeg,image/gif,image/png"
       drag
     >
-      <i class="el-icon-upload" />
+      <el-icon class="el-icon--upload"><UploadFilled /></el-icon>
       <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
     </el-upload>
     <div class="image-preview">
-      <div v-show="imageUrl.length>1" class="image-preview-wrapper">
-        <img :src="value">
+      <div v-show="imageUrl.length > 1" class="image-preview-wrapper">
+        <img :src="modelValue">
         <div class="image-preview-action">
-          <i class="el-icon-delete" @click="rmImage" />
+          <el-icon @click="rmImage"><Delete /></el-icon>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { ElNotification } from 'element-plus'
+import { UploadFilled, Delete } from '@element-plus/icons-vue'
 import { getToken } from '@/utils/auth'
 import { validFile } from '@/utils/index'
 
-export default {
-  name: 'SingleImageUpload',
-  props: {
-    value: {
-      type: String,
-      default: ''
-    }
-  },
-  data() {
-    return {
-      tempUrl: '',
-      dataObj: { token: '', key: '' },
-      headers: {
-        'accessToken': getToken()
-      }
-    }
-  },
-  computed: {
-    imageUrl() {
-      return this.value
-    }
-  },
-  methods: {
-    validFile,
-    rmImage() {
-      this.emitInput('')
-    },
-    emitInput(val) {
-      this.$emit('input', val)
-    },
-    handleImageSuccess(response) {
-      if (response.code === 200) {
-        this.emitInput(response.data.filePath)
-      } else {
-        this.$notify({
-          title: response.msg,
-          type: 'error',
-          duration: 2000
-        })
-      }
-    },
-    beforeUpload(file) {
-      return this.validFile(file)
-    }
+interface Props {
+  modelValue: string
+}
+
+const props = defineProps<Props>()
+
+const emit = defineEmits<{
+  'update:modelValue': [value: string]
+}>()
+
+const tempUrl = ref('')
+const dataObj = ref({ token: '', key: '' })
+const headers = ref({
+  accessToken: getToken()
+})
+
+const imageUrl = computed(() => props.modelValue)
+
+function rmImage() {
+  emitInput('')
+}
+
+function emitInput(val: string) {
+  emit('update:modelValue', val)
+}
+
+function handleImageSuccess(response: any) {
+  if (response.code === 200) {
+    emitInput(response.data.filePath)
+  } else {
+    ElNotification({
+      title: response.msg,
+      type: 'error',
+      duration: 2000
+    })
   }
+}
+
+function beforeUpload(file: File) {
+  return validFile(file)
 }
 </script>
 
 <style lang="scss" scoped>
-@import "~@/styles/mixin.scss";
+@import '@/styles/mixin.scss';
+
 .upload-container {
   width: 50%;
   position: relative;
   @include clearfix;
+
   .image-uploader {
     width: 35%;
     float: left;
   }
+
   .image-preview {
     width: 200px;
     height: 200px;
@@ -95,15 +96,18 @@ export default {
     border: 1px dashed #d9d9d9;
     float: left;
     margin-left: 50px;
+
     .image-preview-wrapper {
       position: relative;
       width: 100%;
       height: 100%;
+
       img {
         width: 100%;
         height: 100%;
       }
     }
+
     .image-preview-action {
       position: absolute;
       width: 100%;
@@ -115,21 +119,24 @@ export default {
       color: #fff;
       opacity: 0;
       font-size: 20px;
-      background-color: rgba(0, 0, 0, .5);
-      transition: opacity .3s;
+      background-color: rgba(0, 0, 0, 0.5);
+      transition: opacity 0.3s;
       cursor: pointer;
       text-align: center;
       line-height: 200px;
-      .el-icon-delete {
+
+      .el-icon {
         font-size: 36px;
       }
     }
+
     &:hover {
       .image-preview-action {
         opacity: 1;
       }
     }
   }
+
   .image-app-preview {
     width: 320px;
     height: 180px;
@@ -137,10 +144,11 @@ export default {
     border: 1px dashed #d9d9d9;
     float: left;
     margin-left: 50px;
+
     .app-fake-conver {
       height: 44px;
       position: absolute;
-      width: 100%; // background: rgba(0, 0, 0, .1);
+      width: 100%;
       text-align: center;
       line-height: 64px;
       color: #fff;

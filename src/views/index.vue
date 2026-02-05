@@ -1,10 +1,9 @@
 <template>
   <div class="dashboard-editor-container">
+    <panel-group @handle-set-line-chart-data="handleSetLineChartData" />
 
-    <panel-group @handleSetLineChartData="handleSetLineChartData" />
-
-    <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <line-chart :chart-data="lineChartData" />
+    <el-row style="background: #fff; padding: 16px 16px 0; margin-bottom: 32px">
+      <line-chart :chart-data="currentLineChartData" />
     </el-row>
 
     <el-row :gutter="32">
@@ -24,18 +23,30 @@
         </div>
       </el-col>
     </el-row>
-
   </div>
 </template>
 
-<script>
-import PanelGroup from './dashboard/components/PanelGroup'
-import LineChart from './dashboard/components/LineChart'
-import RaddarChart from './dashboard/components/RaddarChart'
-import PieChart from './dashboard/components/PieChart'
-import BarChart from './dashboard/components/BarChart'
+<script setup lang="ts">
+import { ref } from 'vue'
+import PanelGroup from './dashboard/components/PanelGroup.vue'
+import LineChart from './dashboard/components/LineChart.vue'
+import RaddarChart from './dashboard/components/RaddarChart.vue'
+import PieChart from './dashboard/components/PieChart.vue'
+import BarChart from './dashboard/components/BarChart.vue'
 
-const lineChartData = {
+interface LineChartData {
+  expectedData: number[]
+  actualData: number[]
+}
+
+interface LineChartDataMap {
+  newVisitis: LineChartData
+  messages: LineChartData
+  purchases: LineChartData
+  shoppings: LineChartData
+}
+
+const lineChartData: LineChartDataMap = {
   newVisitis: {
     expectedData: [100, 120, 161, 134, 105, 160, 165],
     actualData: [120, 82, 91, 154, 162, 140, 145]
@@ -54,44 +65,29 @@ const lineChartData = {
   }
 }
 
-export default {
-  name: 'Index',
-  components: {
-    PanelGroup,
-    LineChart,
-    RaddarChart,
-    PieChart,
-    BarChart
-  },
-  data() {
-    return {
-      lineChartData: lineChartData.newVisitis
-    }
-  },
-  methods: {
-    handleSetLineChartData(type) {
-      this.lineChartData = lineChartData[type]
-    }
-  }
+const currentLineChartData = ref<LineChartData>(lineChartData.newVisitis)
+
+function handleSetLineChartData(type: keyof LineChartDataMap) {
+  currentLineChartData.value = lineChartData[type]
 }
 </script>
 
 <style lang="scss" scoped>
-  .dashboard-editor-container {
-    padding: 32px;
-    background-color: rgb(240, 242, 245);
-    position: relative;
+.dashboard-editor-container {
+  padding: 32px;
+  background-color: rgb(240, 242, 245);
+  position: relative;
 
-    .chart-wrapper {
-      background: #fff;
-      padding: 16px 16px 0;
-      margin-bottom: 32px;
-    }
+  .chart-wrapper {
+    background: #fff;
+    padding: 16px 16px 0;
+    margin-bottom: 32px;
   }
+}
 
-  @media (max-width:1024px) {
-    .chart-wrapper {
-      padding: 8px;
-    }
+@media (max-width: 1024px) {
+  .chart-wrapper {
+    padding: 8px;
   }
+}
 </style>

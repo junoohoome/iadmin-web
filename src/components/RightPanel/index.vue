@@ -1,5 +1,5 @@
 <template>
-  <div ref="rightPanel" :class="{show:show}" class="rightPanel-container">
+  <div ref="rightPanel" :class="{ show: showVal }" class="rightPanel-container">
     <div class="rightPanel-background" />
     <div class="rightPanel">
       <div class="rightPanel-items">
@@ -9,75 +9,87 @@
   </div>
 </template>
 
-<script>
-import { addClass, removeClass } from '@/utils'
+<script setup lang="ts">
+import { ref, computed, watch, onBeforeUnmount, onMounted } from 'vue'
+import { useSettingsStore } from '@/stores'
 
-export default {
-  name: 'RightPanel',
-  props: {
-    clickNotClose: {
-      default: false,
-      type: Boolean
-    },
-    buttonTop: {
-      default: 250,
-      type: Number
-    }
-  },
-  computed: {
-    show: {
-      get() {
-        return this.$store.state.settings.showSettings
-      },
-      set(val) {
-        this.$store.dispatch('settings/changeSetting', {
-          key: 'showSettings',
-          value: val
-        })
-      }
-    },
-    theme() {
-      return this.$store.state.settings.theme
-    }
-  },
-  watch: {
-    show(value) {
-      if (value && !this.clickNotClose) {
-        this.addEventClick()
-      }
-      if (value) {
-        addClass(document.body, 'showRightPanel')
-      } else {
-        removeClass(document.body, 'showRightPanel')
-      }
-    }
-  },
-  mounted() {
-    this.insertToBody()
-    this.addEventClick()
-  },
-  beforeDestroy() {
-    const elx = this.$refs.rightPanel
-    elx.remove()
-  },
-  methods: {
-    addEventClick() {
-      window.addEventListener('click', this.closeSidebar)
-    },
-    closeSidebar(evt) {
-      const parent = evt.target.closest('.rightPanel')
-      if (!parent) {
-        this.show = false
-        window.removeEventListener('click', this.closeSidebar)
-      }
-    },
-    insertToBody() {
-      const elx = this.$refs.rightPanel
-      const body = document.querySelector('body')
-      body.insertBefore(elx, body.firstChild)
-    }
+interface Props {
+  clickNotClose?: boolean
+  buttonTop?: number
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  clickNotClose: false,
+  buttonTop: 250
+})
+
+const settingsStore = useSettingsStore()
+const rightPanel = ref<HTMLElement>()
+
+const showVal = computed({
+  get: () => settingsStore.showSettings,
+  set: (val) => {
+    settingsStore.changeSetting({
+      key: 'showSettings',
+      value: val
+    })
+  }
+})
+
+const theme = computed(() => settingsStore.theme)
+
+const addClass = (element: HTMLElement, className: string) => {
+  element.classList.add(className)
+}
+
+const removeClass = (element: HTMLElement, className: string) => {
+  element.classList.remove(className)
+}
+
+function closeSidebar(evt: Event) {
+  const parent = (evt.target as HTMLElement).closest('.rightPanel')
+  if (!parent) {
+    showVal.value = false
+    window.removeEventListener('click', closeSidebar)
   }
 }
+
+function addEventClick() {
+  window.addEventListener('click', closeSidebar)
+}
+
+function insertToBody() {
+  if (rightPanel.value) {
+    const body = document.querySelector('body')
+    body?.insertBefore(rightPanel.value, body.firstChild)
+  }
+}
+
+watch(
+  showVal,
+  (value) => {
+    if (value && !props.clickNotClose) {
+      addEventClick()
+    }
+    if (value) {
+      addClass(document.body, 'showRightPanel')
+    } else {
+      removeClass(document.body, 'showRightPanel')
+    }
+  }
+)
+
+onMounted(() => {
+  insertToBody()
+  if (showVal.value && !props.clickNotClose) {
+    addEventClick()
+  }
+})
+
+onBeforeUnmount(() => {
+  const elx = rightPanel.value
+  elx?.remove()
+})
 </script>
 
 <style>
@@ -94,8 +106,8 @@ export default {
   top: 0;
   left: 0;
   opacity: 0;
-  transition: opacity .3s cubic-bezier(.7, .3, .1, 1);
-  background: rgba(0, 0, 0, .2);
+  transition: opacity 0.3s cubic-bezier(0.7, 0.3, 0.1, 1);
+  background: rgba(0, 0, 0, 0.2);
   z-index: -1;
 }
 
@@ -106,15 +118,15 @@ export default {
   position: fixed;
   top: 0;
   right: 0;
-  box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, .05);
-  transition: all .25s cubic-bezier(.7, .3, .1, 1);
+  box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.05);
+  transition: all 0.25s cubic-bezier(0.7, 0.3, 0.1, 1);
   transform: translate(100%);
   background: #fff;
   z-index: 40000;
 }
 
 .show {
-  transition: all .3s cubic-bezier(.7, .3, .1, 1);
+  transition: all 0.3s cubic-bezier(0.7, 0.3, 0.1, 1);
 
   .rightPanel-background {
     z-index: 20000;
@@ -141,6 +153,7 @@ export default {
   cursor: pointer;
   color: #fff;
   line-height: 48px;
+
   i {
     font-size: 24px;
     line-height: 48px;

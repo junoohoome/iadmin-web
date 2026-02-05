@@ -1,56 +1,57 @@
 <template>
   <el-dropdown trigger="click" @command="handleSetSize">
     <div>
-      <svg-icon class-name="size-icon" icon-class="size" />
+      <SvgIcon icon-class="size" />
     </div>
-    <el-dropdown-menu slot="dropdown">
-      <el-dropdown-item v-for="item of sizeOptions" :key="item.value" :disabled="size===item.value" :command="item.value">
-        {{ item.label }}
-      </el-dropdown-item>
-    </el-dropdown-menu>
+    <template #dropdown>
+      <el-dropdown-menu>
+        <el-dropdown-item
+          v-for="item of sizeOptions"
+          :key="item.value"
+          :disabled="size === item.value"
+          :command="item.value"
+        >
+          {{ item.label }}
+        </el-dropdown-item>
+      </el-dropdown-menu>
+    </template>
   </el-dropdown>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      sizeOptions: [
-        { label: 'default', value: 'default' },
-        { label: 'medium', value: 'medium' },
-        { label: 'small', value: 'small' },
-        { label: 'mini', value: 'mini' }
-      ]
-    }
-  },
-  computed: {
-    size() {
-      return this.$store.getters.size
-    }
-  },
-  methods: {
-    handleSetSize(size) {
-      this.$ELEMENT.size = size
-      this.$store.dispatch('app/setSize', size)
-      this.refreshView()
-      this.$message({
-        message: '切换布局大小成功',
-        type: 'success'
-      })
-    },
-    refreshView() {
-      // In order to make the cached page re-rendered
-      this.$store.dispatch('tagsView/delAllCachedViews', this.$route)
+<script setup lang="ts">
+import { computed, nextTick } from "vue";
+import { ElMessage } from "element-plus";
+import { useAppStore } from "@/stores";
+import { useTagsViewStore } from "@/stores";
+import { useRoute, useRouter } from "vue-router";
 
-      const { fullPath } = this.$route
+const appStore = useAppStore();
+const tagsViewStore = useTagsViewStore();
+const route = useRoute();
+const router = useRouter();
 
-      this.$nextTick(() => {
-        this.$router.replace({
-          path: '/redirect' + fullPath
-        })
-      })
-    }
-  }
+const sizeOptions = [
+  { label: "Default", value: "default" },
+  { label: "Medium", value: "medium" },
+  { label: "Small", value: "small" },
+  { label: "Mini", value: "mini" },
+];
 
+const size = computed(() => appStore.size);
+
+function handleSetSize(newSize: string) {
+  appStore.setSize(newSize);
+  refreshView();
+  ElMessage.success("切换布局大小成功");
+}
+
+function refreshView() {
+  tagsViewStore.delAllCachedViews(route);
+  nextTick(() => {
+    const { fullPath } = route;
+    router.replace({
+      path: "/redirect" + fullPath,
+    });
+  });
 }
 </script>

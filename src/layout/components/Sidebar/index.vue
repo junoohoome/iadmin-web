@@ -1,6 +1,6 @@
 <template>
-  <div :class="{'has-logo':showLogo}">
-    <logo v-if="showLogo" :collapse="isCollapse" />
+  <div :class="{ 'has-logo': showLogo }">
+    <Logo v-if="showLogo" :collapse="isCollapse" />
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu
         :default-active="activeMenu"
@@ -12,43 +12,47 @@
         :collapse-transition="false"
         mode="vertical"
       >
-        <sidebar-item v-for="route in permission_routes" :key="route.path" :item="route" :base-path="route.path" />
+        <SidebarItem
+          v-for="route in permission_routes"
+          :key="route.path"
+          :item="route"
+          :base-path="route.path"
+        />
       </el-menu>
     </el-scrollbar>
   </div>
 </template>
 
-<script>
-import { mapGetters } from 'vuex'
-import Logo from './Logo'
-import SidebarItem from './SidebarItem'
-import variables from '@/styles/variables.scss'
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { useAppStore, useSettingsStore, usePermissionStore } from '@/stores'
+import Logo from './Logo.vue'
+import SidebarItem from './SidebarItem.vue'
 
-export default {
-  components: { SidebarItem, Logo },
-  computed: {
-    ...mapGetters([
-      'permission_routes',
-      'sidebar'
-    ]),
-    activeMenu() {
-      const route = this.$route
-      const { meta, path } = route
-      // if set path, the sidebar will highlight the path you set
-      if (meta.activeMenu) {
-        return meta.activeMenu
-      }
-      return path
-    },
-    showLogo() {
-      return this.$store.state.settings.sidebarLogo
-    },
-    variables() {
-      return variables
-    },
-    isCollapse() {
-      return !this.sidebar.opened
-    }
+const route = useRoute()
+const appStore = useAppStore()
+const settingsStore = useSettingsStore()
+const permissionStore = usePermissionStore()
+
+const sidebar = computed(() => appStore.sidebar)
+const permission_routes = computed(() => permissionStore.allRoutes)
+
+const activeMenu = computed(() => {
+  const { meta, path } = route
+  if (meta?.activeMenu) {
+    return meta.activeMenu as string
   }
+  return path
+})
+
+const showLogo = computed(() => settingsStore.sidebarLogo)
+const isCollapse = computed(() => !sidebar.value.opened)
+
+// 定义变量值
+const variables = {
+  menuBg: '#304156',
+  menuText: '#bfcbd9',
+  menuActiveText: '#409EFF'
 }
 </script>

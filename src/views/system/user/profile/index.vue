@@ -3,9 +3,11 @@
     <el-row :gutter="20">
       <el-col :span="12" :xs="24">
         <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>个人信息</span>
-          </div>
+          <template #header>
+            <div class="clearfix">
+              <span>个人信息</span>
+            </div>
+          </template>
           <div>
             <div class="text-center">
               <user-avatar :user="user" />
@@ -42,9 +44,11 @@
       </el-col>
       <el-col :span="12" :xs="24">
         <el-card>
-          <div slot="header" class="clearfix">
-            <span>基本资料</span>
-          </div>
+          <template #header>
+            <div class="clearfix">
+              <span>基本资料</span>
+            </div>
+          </template>
           <el-tabs v-model="activeTab">
             <el-tab-pane label="基本资料" name="userinfo">
               <user-info :user="user" />
@@ -59,57 +63,51 @@
   </div>
 </template>
 
-<script>
-import UserAvatar from './components/UserAvatar'
-import UserInfo from './components/UserInfo'
-import ResetPwd from './components/ResetPwd'
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import UserAvatar from './components/UserAvatar.vue'
+import UserInfo from './components/UserInfo.vue'
+import ResetPwd from './components/ResetPwd.vue'
 import { getUserProfile } from '@/api/user'
+import type { User } from '@/types'
 
-export default {
-  name: 'Profile',
-  components: { UserAvatar, UserInfo, ResetPwd },
-  data() {
-    return {
-      user: {},
-      activeTab: 'userinfo'
-    }
-  },
-  created() {
-    this.getUser()
-  },
-  methods: {
-    getUser() {
-      getUserProfile().then(response => {
-        this.user = response.data
-      })
-    }
-  }
+const user = ref<User>({})
+const activeTab = ref('userinfo')
+
+onMounted(() => {
+  getUser()
+})
+
+function getUser() {
+  getUserProfile().then((response) => {
+    user.value = response.data
+  })
 }
 </script>
 
 <style scoped>
-  .pull-right {
-    float: right !important;
-  }
+.pull-right {
+  float: right !important;
+}
 
-  .list-group-striped > .list-group-item {
-    border-left: 0;
-    border-right: 0;
-    border-radius: 0;
-    padding-left: 0;
-    padding-right: 0;
-  }
+.list-group-striped > .list-group-item {
+  border-left: 0;
+  border-right: 0;
+  border-radius: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
 
-  .list-group {
-    padding-left: 0px;
-    list-style: none;
-  }
+.list-group {
+  padding-left: 0px;
+  list-style: none;
+}
 
-  .list-group-item {
-    border-bottom: 1px solid #e7eaec;
-    border-top: 1px solid #e7eaec;
-    margin-bottom: -1px;
-    padding: 11px 0px;
-    font-size: 13px;
-  }
+.list-group-item {
+  border-bottom: 1px solid #e7eaec;
+  border-top: 1px solid #e7eaec;
+  margin-bottom: -1px;
+  padding: 11px 0px;
+  font-size: 13px;
+}
 </style>
