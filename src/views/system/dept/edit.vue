@@ -2,15 +2,7 @@
   <el-dialog v-model="dialog" :title="isAdd ? '新增部门' : '编辑部门'" append-to-body width="600px" @close="cancel">
     <el-form ref="formRef" :model="form" :rules="rules" label-width="100px">
       <el-form-item label="上级部门" prop="parentId">
-        <el-tree-select
-          v-model="form.parentId"
-          :data="deptOptions"
-          :props="{ label: 'deptName', value: 'deptId' }"
-          placeholder="选择上级部门"
-          check-strictly
-          :render-after-expand="false"
-          style="width: 100%"
-        />
+        <el-input-number v-model="form.parentId" :min="0" :precision="0" placeholder="请输入上级部门ID" style="width: 100%" />
       </el-form-item>
       <el-form-item label="部门名称" prop="deptName">
         <el-input v-model="form.deptName" placeholder="请输入部门名称" />
@@ -62,7 +54,6 @@ interface DeptForm {
 
 interface Props {
   isAdd: boolean
-  deptOptions: Dept[]
 }
 
 const props = defineProps<Props>()
@@ -89,7 +80,7 @@ const rules = {
     { required: true, message: '请输入显示排序', trigger: 'blur' }
   ],
   parentId: [
-    { required: true, message: '请选择上级部门', trigger: 'change' }
+    { required: true, message: '请输入上级部门ID', trigger: 'change' }
   ],
   email: [
     { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
@@ -100,7 +91,7 @@ const rules = {
 }
 
 function cancel() {
-  resetForm()
+  dialog.value = false
 }
 
 function doSubmit() {
@@ -145,20 +136,20 @@ function doEdit() {
   update(form.value).then((res) => {
     loading.value = false
     if (res.code === 200) {
-      resetForm()
       ElNotification({
         title: '修改成功',
         type: 'success',
         duration: 2500
       })
+      dialog.value = false
       emit('refresh')
-    } else {
-      ElNotification({
-        title: res.msg || '修改失败',
-        type: 'error',
-        duration: 2500
-      })
+      return
     }
+    ElNotification({
+      title: res.msg || '修改失败',
+      type: 'error',
+      duration: 2500
+    })
   }).catch(() => {
     loading.value = false
   })
@@ -186,16 +177,8 @@ function initForm(data?: Dept) {
   }
 }
 
-function resetForm() {
-  dialog.value = false
-  loading.value = false
-  formRef.value?.resetFields()
-  initForm()
-}
-
 defineExpose({
   dialog,
-  initForm,
-  resetForm
+  initForm
 })
 </script>

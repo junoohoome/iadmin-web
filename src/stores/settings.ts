@@ -9,6 +9,7 @@ interface SettingsState {
   sidebarLogo: boolean;
   showFooter: boolean;
   footerTxt: string;
+  caseNumber: string;
 }
 
 export const useSettingsStore = defineStore("settings", {
@@ -21,6 +22,7 @@ export const useSettingsStore = defineStore("settings", {
       settings.sidebarLogo !== undefined ? settings.sidebarLogo : true,
     showFooter: settings.showFooter !== undefined ? settings.showFooter : true,
     footerTxt: settings.footerTxt || "",
+    caseNumber: settings.caseNumber || "",
   }),
 
   actions: {

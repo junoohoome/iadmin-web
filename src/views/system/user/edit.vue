@@ -142,15 +142,18 @@ function doAdd(data: any) {
       return
     }
     ElNotification({
-      title: res.msg,
+      title: res.msg || '添加失败',
       type: 'error',
       duration: 2500
     })
+  }).catch(() => {
+    loading.value = false
   })
 }
 
 function doEdit(data: any) {
   updateUser(data).then((res) => {
+    loading.value = false
     if (res.code === 200) {
       resetForm()
       ElNotification({
@@ -159,7 +162,14 @@ function doEdit(data: any) {
         duration: 2500
       })
       emit('refresh')
+    } else {
+      ElNotification({
+        title: res.msg || '修改失败',
+        type: 'error',
+        duration: 2500
+      })
     }
+  }).catch(() => {
     loading.value = false
   })
 }

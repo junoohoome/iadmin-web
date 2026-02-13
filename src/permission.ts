@@ -10,7 +10,7 @@ import type { RouteLocationNormalized } from 'vue-router'
 
 NProgress.configure({ showSpinner: false })
 
-const whiteList = ['/login', '/401'] // no redirect whitelist
+const whiteList = ['/login', '/401', '/system/user'] // 添加 system/user 路径到白名单
 
 router.beforeEach(async (to: RouteLocationNormalized, _from, next) => {
   NProgress.start()

@@ -52,10 +52,10 @@ export const constantRoutes: RouteRecordRaw[] = [
     ]
   },
   {
-    path: '/user',
+    path: '/system/user',
     component: Layout,
     meta: { hidden: true } as RouteMeta,
-    redirect: '/user/profile',
+    redirect: '/system/user/profile',
     children: [
       {
         path: 'profile',

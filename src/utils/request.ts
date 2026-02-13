@@ -61,8 +61,18 @@ service.interceptors.response.use(
   },
   (error) => {
     console.error('[Response Error]', error.config?.url, error.response?.data || error.message)
+
+    // 尝试从响应中获取更详细的错误信息
+    let errorMsg = '请求失败'
+    if (error.response?.data) {
+      const data = error.response.data
+      errorMsg = data.msg || data.message || errorMsg
+    } else if (error.message) {
+      errorMsg = error.message
+    }
+
     ElMessage({
-      message: error.message || '请求失败',
+      message: errorMsg,
       type: 'error',
       duration: 5 * 1000
     })

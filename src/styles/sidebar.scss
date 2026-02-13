@@ -29,6 +29,7 @@
 
     .scrollbar-wrapper {
       overflow-x: hidden !important;
+      padding-top: 0; // 移除顶部空白
     }
 
     .el-scrollbar__bar.is-vertical {
@@ -37,6 +38,15 @@
 
     .el-scrollbar {
       height: 100%;
+      padding-top: 0; // 移除顶部空白
+    }
+
+    .el-scrollbar__view {
+      padding-top: 0 !important; // 移除滚动视图的顶部空白
+    }
+
+    .el-scrollbar__wrap {
+      padding-top: 0 !important; // 移除滚动容器的顶部空白
     }
 
     &.has-logo {
@@ -63,6 +73,7 @@
       border: none;
       height: 100%;
       width: 100% !important;
+      padding-top: 0; // 移除顶部空白
     }
 
     // menu hover

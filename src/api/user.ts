@@ -4,7 +4,8 @@ import type { ApiResponse, PageResult, UserInfo } from '@/types'
 // 用户查询参数
 export interface UserQueryParams {
   page: number
-  pageSize: number
+  limit?: number
+  pageSize?: number
   username?: string
   phone?: string
   status?: number

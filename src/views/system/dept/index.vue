@@ -27,8 +27,6 @@
     <el-table
       v-loading="loading"
       :data="tableData"
-      row-key="deptId"
-      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       style="width: 100%"
     >
       <el-table-column label="部门名称" prop="deptName" min-width="200" />
@@ -72,12 +70,12 @@
     </el-table>
 
     <!-- 编辑弹窗 -->
-    <edit ref="formRef" :is-add="isAdd" :dept-options="deptTree" @refresh="getList" />
+    <edit ref="formRef" :is-add="isAdd" @refresh="getList" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { ElMessageBox, ElNotification } from 'element-plus'
 import { Search, Plus } from '@element-plus/icons-vue'
 import Edit from './edit.vue'
@@ -85,16 +83,10 @@ import { getTreeList, del } from '@/api/dept'
 import checkPermission from '@/utils/permission'
 import type { Dept } from '@/types'
 
-const loading = ref(true)
+const loading = ref(false)
 const deptName = ref('')
 const tableData = ref<Dept[]>([])
 const isAdd = ref(false)
-
-// 部门树形列表（用于父部门选择）
-const deptTree = computed(() => {
-  // 添加一个顶级选项
-  return [{ deptId: 0, deptName: '顶级部门', parentId: -1, children: tableData.value, orderNum: 0, status: '0' }]
-})
 
 onMounted(() => {
   getList()
@@ -104,38 +96,15 @@ onMounted(() => {
 function getList() {
   loading.value = true
   getTreeList().then((res) => {
-    tableData.value = buildTree(res.data, 0)
+    tableData.value = res.data
     loading.value = false
   })
-}
-
-/** 构建树形结构 */
-function buildTree(depts: Dept[], parentId: number): Dept[] {
-  const tree: Dept[] = []
-  depts.forEach((dept) => {
-    if (dept.parentId === parentId) {
-      const children = buildTree(depts, dept.deptId)
-      if (children.length > 0) {
-        dept.children = children
-      }
-      tree.push(dept)
-    }
-  })
-  return tree
 }
 
 /** 搜索按钮操作 */
 function handleQuery() {
   if (deptName.value) {
-    const filterByName = (depts: Dept[]): Dept[] => {
-      return depts
-        .filter((dept) => dept.deptName.includes(deptName.value))
-        .map((dept) => ({
-          ...dept,
-          children: dept.children ? filterByName(dept.children) : undefined
-        }))
-    }
-    tableData.value = filterByName(buildTree(JSON.parse(JSON.stringify(tableData.value)), 0))
+    tableData.value = tableData.value.filter(dept => dept.deptName.includes(deptName.value))
   } else {
     getList()
   }

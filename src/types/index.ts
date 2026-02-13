@@ -29,6 +29,7 @@ export interface LoginParams {
 // 用户信息
 export interface UserInfo {
   id: number;
+  userId?: number; // 兼容字段，某些后端接口返回 userId 而不是 id
   username: string;
   nickname?: string;
   nickName?: string;
@@ -92,6 +93,24 @@ export interface RoleOption {
   value: number;
   text: string;
 }
+
+// 部门信息
+export interface DeptInfo {
+  deptId: number;
+  parentId: number;
+  ancestors?: string;
+  deptName: string;
+  orderNum: number;
+  leader?: string;
+  phone?: string;
+  email?: string;
+  status: string;
+  delFlag?: string;
+  children?: DeptInfo[];
+  createTime?: string;
+}
+
+export type Dept = DeptInfo;
 
 // 字典类型
 export interface DictType {

@@ -66,7 +66,7 @@ export const useUserStore = defineStore("user", {
     // 获取用户信息
     async getUserInfo() {
       try {
-        const res = await getInfo();
+        const res = await getInfo(this.token);
         const user = res.data.user;
 
         const avatar = user.avatar

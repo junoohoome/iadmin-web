@@ -17,7 +17,15 @@ const privateKey = 'MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEA1Vb98wHg0dyE
 // 加密
 export function encrypt(txt: string): string | false {
   const encryptor = new JSEncrypt()
-  encryptor.setPublicKey(publicKey) // 设置公钥
+  encryptor.setPublicKey(publicKey)
+  // 指定使用 ECB 模式和 PKCS1 填充，以匹配后端 Hutool RSA 默认配置
+  // @ts-ignore
+  // @ts-expect-error
+  // @ts-ignore
+  encryptor.__options = {
+    mode: 'ECB',
+    padding: 'PKCS1'
+  }
   return encryptor.encrypt(txt) // 对需要加密的数据进行加密
 }
 

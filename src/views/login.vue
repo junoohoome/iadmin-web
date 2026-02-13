@@ -128,11 +128,11 @@ function getCookie() {
   const username = Cookies.get('username')
   const password = Cookies.get('password')
   const rememberMe = Cookies.get('rememberMe')
-  // 保存cookie里面的加密后的密码
+  // 保存cookie里面的加密后的密码（仅用于比较，不用于表单显示）
   cookiePass.value = password === undefined ? '' : password
   loginForm.value = {
     username: username === undefined ? loginForm.value.username : username,
-    password: password === undefined ? loginForm.value.password : password,
+    password: loginForm.value.password, // 始终使用表单明文密码
     rememberMe: rememberMe === undefined ? false : Boolean(rememberMe),
     code: '',
     uuid: loginForm.value.uuid

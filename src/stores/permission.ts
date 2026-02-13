@@ -4,12 +4,102 @@ import { buildRoute } from '@/api/login'
 import type { RouteRecordRaw } from 'vue-router'
 import type { MenuItem } from '@/types'
 
+const Layout = () => import('@/layout/index.vue')
+
+// 开发环境默认路由（当后端未返回路由时使用）
+const DEFAULT_ROUTES: MenuItem[] = [
+  {
+    id: 1,
+    parentId: 0,
+    name: 'System',
+    path: '/system',
+    component: 'Layout',
+    redirect: '/system/user',
+    meta: { title: '系统管理', icon: 'system' },
+    type: 'directory',
+    sort: 1,
+    children: [
+      {
+        id: 11,
+        parentId: 1,
+        name: 'User',
+        path: 'user',
+        component: 'system/user/index',
+        meta: { title: '用户管理', icon: 'user' },
+        type: 'menu',
+        sort: 1,
+      },
+      {
+        id: 12,
+        parentId: 1,
+        name: 'Role',
+        path: 'role',
+        component: 'system/role/index',
+        meta: { title: '角色管理', icon: 'peoples' },
+        type: 'menu',
+        sort: 2,
+      },
+      {
+        id: 13,
+        parentId: 1,
+        name: 'Menu',
+        path: 'menu',
+        component: 'system/menu/index',
+        meta: { title: '菜单管理', icon: 'tree-table' },
+        type: 'menu',
+        sort: 3,
+      },
+      {
+        id: 14,
+        parentId: 1,
+        name: 'Dict',
+        path: 'dict',
+        component: 'system/dict/index',
+        meta: { title: '字典管理', icon: 'education' },
+        type: 'menu',
+        sort: 4,
+      },
+    ]
+  },
+  {
+    id: 2,
+    parentId: 0,
+    name: 'Monitor',
+    path: '/monitor',
+    component: 'Layout',
+    redirect: '/monitor/operLog',
+    meta: { title: '系统监控', icon: 'monitor' },
+    type: 'directory',
+    sort: 2,
+    children: [
+      {
+        id: 21,
+        parentId: 2,
+        name: 'OperLog',
+        path: 'operLog',
+        component: 'monitor/oper-log/index',
+        meta: { title: '操作日志', icon: 'log' },
+        type: 'menu',
+        sort: 1,
+      },
+      {
+        id: 22,
+        parentId: 2,
+        name: 'LoginLog',
+        path: 'loginLog',
+        component: 'monitor/login-log/index',
+        meta: { title: '登录日志', icon: 'log' },
+        type: 'menu',
+        sort: 2,
+      },
+    ]
+  }
+]
+
 interface PermissionState {
   routes: RouteRecordRaw[]
   addRoutes: RouteRecordRaw[]
 }
-
-const Layout = () => import('@/layout/index.vue')
 
 export const usePermissionStore = defineStore('permission', {
   state: (): PermissionState => ({
@@ -25,20 +115,43 @@ export const usePermissionStore = defineStore('permission', {
     SET_ROUTES(routes: RouteRecordRaw[]) {
       this.addRoutes = routes
       this.routes = constantRoutes.concat(routes)
+      console.log('[Permission] SET_ROUTES called, routes:', routes)
     },
 
     // 根据角色生成路由
     async generateRoutes(roles: string[]) {
+      console.log('[Permission] generateRoutes called with roles:', roles)
       return new Promise<RouteRecordRaw[]>(async (resolve) => {
-        // 从后端获取路由配置
-        const response = await buildRoute()
-        let accessedRoutes: RouteRecordRaw[] = response.data
+        try {
+          console.log('[Permission] Calling buildRoute API...')
+          // 从后端获取路由配置
+          const response = await buildRoute()
+          console.log('[Permission] Backend routes response:', response)
+          let accessedRoutes: RouteRecordRaw[] = response.data
 
-        // 转换路由组件
-        accessedRoutes = filterAsyncRouter(accessedRoutes)
+          if (!accessedRoutes || accessedRoutes.length === 0) {
+            console.warn('[Permission] No routes returned from backend, using default routes')
+            // 使用默认路由作为fallback
+            accessedRoutes = filterAsyncRouter(DEFAULT_ROUTES)
+            this.SET_ROUTES(accessedRoutes)
+            resolve(accessedRoutes)
+            return
+          }
 
-        this.SET_ROUTES(accessedRoutes)
-        resolve(accessedRoutes)
+          // 转换路由组件
+          accessedRoutes = filterAsyncRouter(accessedRoutes)
+          console.log('[Permission] Filtered routes:', accessedRoutes)
+
+          this.SET_ROUTES(accessedRoutes)
+          resolve(accessedRoutes)
+        } catch (error) {
+          console.error('[Permission] Failed to generate routes:', error)
+          // 出错时使用默认路由
+          console.warn('[Permission] Using default routes due to error')
+          const accessedRoutes = filterAsyncRouter(DEFAULT_ROUTES)
+          this.SET_ROUTES(accessedRoutes)
+          resolve(accessedRoutes)
+        }
       })
     }
   }
@@ -62,6 +175,12 @@ export function filterAsyncRouter(routes: MenuItem[]): RouteRecordRaw[] {
         (route as any).hidden = route.visible === '0'
       }
 
+      // Fix child routes: convert absolute paths to relative paths
+      // Backend returns "/role" but we need "role" for proper nesting
+      if (route.path && route.path.startsWith('/') && (route as any).parentId !== 0) {
+        route.path = route.path.substring(1)
+      }
+
       if (route.component) {
         if (route.component === 'Layout') {
           route.component = Layout
@@ -81,16 +200,30 @@ export function filterAsyncRouter(routes: MenuItem[]): RouteRecordRaw[] {
 /**
  * 路由懒加载 - 使用 Vite glob 预加载所有 views 组件
  */
-const modules = import.meta.glob('@/views/**/*.vue')
+const modules = import.meta.glob('../views/**/*.vue')
+
+// 打印所有可用的模块路径用于调试
+console.log('[Permission] Available view modules:', Object.keys(modules).map(k => k.replace('../views/', '')))
 
 export function loadView(view: string) {
-  const key = `@/views/${view}.vue`
-  const component = modules[key]
+  // 尝试多种路径格式 - 使用相对路径
+  const possibleKeys = [
+    `../views/${view}.vue`,
+    `../views/${view}`,
+  ]
 
-  if (!component) {
-    console.warn(`View component not found: ${view}`)
-    return () => import('@/views/error/404.vue')
+  for (const key of possibleKeys) {
+    if (modules[key]) {
+      console.log(`[Permission] Found component: ${view} -> ${key}`)
+      return modules[key]
+    }
   }
 
-  return component
+  // 如果都没找到，打印调试信息
+  console.warn(`[Permission] View component not found: ${view}`)
+  console.warn(`[Permission] Tried keys:`, possibleKeys)
+  console.warn(`[Permission] Available modules:`, Object.keys(modules))
+  console.warn(`[Permission] All available role modules:`, Object.keys(modules).filter(k => k.includes('role')))
+
+  return () => import('../views/error/404.vue')
 }

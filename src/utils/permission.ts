@@ -17,9 +17,9 @@ export default function checkPermission(value: string[]): boolean {
   if (value && Array.isArray(value) && value.length > 0) {
     const permissions = userStore.permissions
     const permissionRoles = value
-    const hasPermission = permissions.some((p: string) => {
-      return permissionRoles.includes(p)
-    })
+    // 同时检查角色和权限
+    const hasPermission = roles.some((r: string) => permissionRoles.includes(r)) ||
+                        permissions.some((p: string) => permissionRoles.includes(p))
 
     if (!hasPermission) {
       return false

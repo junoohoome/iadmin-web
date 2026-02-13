@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!item.hidden" class="menu-wrapper">
+  <div v-if="!isHidden" class="menu-wrapper">
     <template
       v-if="
         hasOneShowingChild(item.children, item) &&
@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, type PropType } from "vue";
+import { ref, computed, type PropType } from "vue";
 import { isExternal } from "@/utils/validate";
 import Item from "./Item.vue";
 import AppLink from "./Link.vue";
@@ -59,6 +59,7 @@ interface RouteConfig {
     activeMenu?: string;
     affix?: boolean;
     noCache?: boolean;
+    hidden?: boolean;
   };
   children?: RouteConfig[];
   alwaysShow?: boolean;
@@ -83,9 +84,15 @@ const props = defineProps({
 
 const onlyOneChild = ref<RouteConfig | null>(null);
 
+// 检查路由是否隐藏（兼容 hidden 和 meta.hidden）
+const isHidden = computed(() => {
+  return props.item.hidden || props.item.meta?.hidden;
+});
+
 function hasOneShowingChild(children: RouteConfig[] = [], parent: RouteConfig) {
   const showingChildren = children.filter((item) => {
-    if (item.hidden) {
+    const isItemHidden = item.hidden || item.meta?.hidden;
+    if (isItemHidden) {
       return false;
     } else {
       onlyOneChild.value = item;

@@ -19,9 +19,9 @@ const permission: Directive = {
     if (value && value instanceof Array && value.length > 0) {
       const permissionRoles = value
 
-      const hasPermission = permissions.some((p) => {
-        return permissionRoles.includes(p)
-      })
+      // 同时检查角色和权限
+      const hasPermission = roles.some((r) => permissionRoles.includes(r)) ||
+                          permissions.some((p) => permissionRoles.includes(p))
 
       if (!hasPermission) {
         el.parentNode?.removeChild(el)

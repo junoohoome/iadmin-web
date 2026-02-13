@@ -74,7 +74,9 @@ function filterAffixTags(routes: RouteRecordRaw[], basePath = "/"): TagView[] {
   let tags: TagView[] = [];
   routes.forEach((route) => {
     if (route.meta && route.meta.affix) {
-      const tagPath = basePath + "/" + route.path;
+      // 避免双斜杠：如果 basePath 结尾有 / 且 route.path 以 / 开头，只取其一
+      const separator = basePath.endsWith("/") || route.path.startsWith("/") ? "" : "/";
+      const tagPath = basePath + separator + route.path;
       tags.push({
         fullPath: tagPath,
         path: tagPath,

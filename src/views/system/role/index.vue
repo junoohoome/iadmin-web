@@ -127,10 +127,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { ElMessage, ElNotification } from 'element-plus'
 import { Search, Plus, Check } from '@element-plus/icons-vue'
 import Edit from './edit.vue'
+// @ts-ignore
+const EditComponent = Edit as any
 import Pagination from '@/components/Pagination/index.vue'
 import checkPermission from '@/utils/permission'
 import { listRoles, updatePermissions, del, getMenuIdsByRoleId } from '@/api/role'
@@ -203,16 +205,29 @@ function subDelete(id: string) {
 
 function add() {
   isAdd.value = true
-  const form = formRef.value
-  form.dialog = true
-  form.initForm()
+  // 延迟执行，确保 Edit 组件已加载
+  nextTick(() => {
+    const form = formRef.value
+    if (form && form.initForm) {
+      form.dialog = true
+      form.initForm()
+    } else {
+      console.error('[Role] Edit component not ready or initForm not available', { formRef: formRef.value, form })
+    }
+  })
 }
 
 function edit(row: Role) {
   isAdd.value = false
-  const form = formRef.value
-  form.initForm(row)
-  form.dialog = true
+  nextTick(() => {
+    const form = formRef.value
+    if (form && form.initForm) {
+      form.initForm(row)
+      form.dialog = true
+    } else {
+      console.error('[Role] Edit component not ready or initForm not available', { formRef: formRef.value, form })
+    }
+  })
 }
 
 function handleQuery() {

@@ -60,9 +60,9 @@ const headerSearchSelect = ref();
 const routes = computed(() => permissionStore.allRoutes);
 
 watch(
-  routes,
-  (newRoutes) => {
-    searchPool.value = generateRoutes(newRoutes);
+  searchPool,
+  (list) => {
+    searchPool.value = generateRoutes(list);
   },
   { immediate: true },
 );

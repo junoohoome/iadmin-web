@@ -8,6 +8,7 @@ const settings = {
   sidebarLogo: true,
   showFooter: true,
   footerTxt: '© 2020 www.starkfang.cn <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache License 2.0</a>',
+  caseNumber: '京ICP备xxxxxxxx号',
   errorLog: 'production'
 }
 
