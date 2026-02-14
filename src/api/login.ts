@@ -51,7 +51,7 @@ export function getInfo(token: string) {
 // 获取菜单路由
 export function buildRoute() {
   return request<ApiResponse<any[]>>({
-    url: '/user/info/getRouters',
+    url: '/getRouters',
     method: 'get'
   })
 }
