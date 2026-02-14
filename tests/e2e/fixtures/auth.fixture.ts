@@ -1,6 +1,5 @@
 // tests/e2e/fixtures/auth.fixture.ts
 import { test as base, expect as baseExpect } from '@playwright/test';
-import { expect } from '@playwright/test';
 
 export const test = base.extend<{
   authenticated: boolean;
@@ -32,7 +31,7 @@ export const test = base.extend<{
     }
 
     // 验证登录成功 - 检查菜单是否存在
-    await expect(page.locator('.el-menu')).toBeVisible({ timeout: 5000 });
+    await baseExpect(page.locator('.el-menu')).toBeVisible({ timeout: 5000 });
 
     // 使用认证状态
     await use(true);

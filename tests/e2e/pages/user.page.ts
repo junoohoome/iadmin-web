@@ -3,7 +3,7 @@ import { Page } from '@playwright/test';
 import { BasePage } from './base.page';
 
 export class UserPage extends BasePage {
-  readonly url = '/system/user';
+  readonly url = '/system/user/';
 
   // 工具栏按钮
   readonly btnAdd = () => this.page.getByRole('button', { name: /新增|添加/i });
@@ -12,7 +12,7 @@ export class UserPage extends BasePage {
   readonly btnExport = () => this.page.getByRole('button', { name: /导出/i });
 
   // 输入框
-  readonly searchInput = () => this.page.getByPlaceholder(/用户名/);
+  readonly searchInput = () => this.page.getByPlaceholder(/用户账号/);
   readonly usernameInput = () => this.page.getByLabel(/用户名/);
   readonly passwordInput = () => this.page.getByLabel(/密码/);
 
@@ -29,6 +29,15 @@ export class UserPage extends BasePage {
   }
 
   // 操作方法
+  async goto(url?: string) {
+    const targetUrl = url || this.url;
+
+    // For SPA, navigate using direct URL
+    await this.page.goto(targetUrl);
+    // Wait for the page to load
+    await this.page.waitForLoadState('networkidle');
+  }
+
   async openAddDialog() {
     await this.btnAdd().click();
     await this.verifyDialogVisible(/新增用户/);

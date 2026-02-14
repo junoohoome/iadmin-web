@@ -29,7 +29,7 @@ export class BasePage {
     }
   }
 
-  async verifyDialogVisible(title: string | RegExp) {
+  async verifyDialogVisible(title: string) {
     const dialog = this.page.locator('.el-dialog');
     await expect(dialog).toBeVisible();
     await expect(dialog).toContainText(title);
