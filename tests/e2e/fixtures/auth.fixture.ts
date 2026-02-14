@@ -1,5 +1,6 @@
 // tests/e2e/fixtures/auth.fixture.ts
 import { test as base, expect as baseExpect } from '@playwright/test';
+import { expect } from '@playwright/test';
 
 export const test = base.extend<{
   authenticated: boolean;
