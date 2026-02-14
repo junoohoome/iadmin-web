@@ -18,7 +18,9 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug",
-    "test:ci": "npm run lint && npm run test:unit"
+    "test:ci": "npm run lint && npm run test:unit",
+    "test:e2e:discover": "tsx scripts/crawler.ts",
+    "test:e2e:generate": "tsx scripts/test-generator.ts"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
@@ -67,6 +69,7 @@
     "prettier": "^3.3.3",
     "sass": "^1.81.0",
     "terser": "^5.36.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.6.3",
     "typescript-eslint": "^8.14.0",
     "unplugin-auto-import": "^0.18.3",

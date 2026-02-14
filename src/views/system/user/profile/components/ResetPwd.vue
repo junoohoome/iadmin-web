@@ -29,12 +29,6 @@ interface User {
   confirmPassword?: string
 }
 
-interface Props {
-  user: User
-}
-
-defineProps<Props>()
-
 const router = useRouter()
 const tagsViewStore = useTagsViewStore()
 const formRef = ref()

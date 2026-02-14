@@ -8,7 +8,7 @@ export interface UserQueryParams {
   pageSize?: number
   username?: string
   phone?: string
-  status?: number
+  status?: number | string
 }
 
 // 用户表单数据

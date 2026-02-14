@@ -212,7 +212,7 @@ function add() {
       form.dialog = true
       form.initForm()
     } else {
-      console.error('[Role] Edit component not ready or initForm not available', { formRef: formRef.value, form })
+      ElNotification.error('编辑组件未准备好')
     }
   })
 }
@@ -225,7 +225,7 @@ function edit(row: Role) {
       form.initForm(row)
       form.dialog = true
     } else {
-      console.error('[Role] Edit component not ready or initForm not available', { formRef: formRef.value, form })
+      ElNotification.error('编辑组件未准备好')
     }
   })
 }
@@ -268,7 +268,6 @@ function saveMenu() {
   }
 
   const checkedMenuIds = menuTreeRef.value?.getCheckedKeys()
-  console.log('菜单ID: ', checkedMenuIds)
   if (!checkedMenuIds || checkedMenuIds.length === 0) {
     ElMessage.error('请选择菜单')
     return

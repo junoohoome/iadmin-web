@@ -12,8 +12,6 @@ const service: AxiosInstance = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   (config) => {
-    // Debug logging
-    console.log('[Request]', config.method?.toUpperCase(), config.url, config.params || config.data)
 
     const token = getToken()
     if (token) {
@@ -23,7 +21,6 @@ service.interceptors.request.use(
     return config
   },
   (error) => {
-    console.error('[Request Error]', error)
     return Promise.reject(error)
   }
 )
@@ -31,8 +28,6 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
   (response: AxiosResponse) => {
-    // Debug logging
-    console.log('[Response]', response.config.url, response.data)
 
     const code = response.data.code
     if (code === 401) {
@@ -60,7 +55,6 @@ service.interceptors.response.use(
     }
   },
   (error) => {
-    console.error('[Response Error]', error.config?.url, error.response?.data || error.message)
 
     // 尝试从响应中获取更详细的错误信息
     let errorMsg = '请求失败'

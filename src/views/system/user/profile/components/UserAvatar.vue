@@ -124,7 +124,6 @@ function uploadImg() {
       if (response.code === 200) {
         open.value = false
         options.img = '/avatar/' + response.data
-        console.info(options.img)
         ElNotification({
           title: '修改成功',
           type: 'success',

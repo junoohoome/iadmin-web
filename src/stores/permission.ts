@@ -115,22 +115,17 @@ export const usePermissionStore = defineStore('permission', {
     SET_ROUTES(routes: RouteRecordRaw[]) {
       this.addRoutes = routes
       this.routes = constantRoutes.concat(routes)
-      console.log('[Permission] SET_ROUTES called, routes:', routes)
     },
 
     // 根据角色生成路由
     async generateRoutes(roles: string[]) {
-      console.log('[Permission] generateRoutes called with roles:', roles)
       return new Promise<RouteRecordRaw[]>(async (resolve) => {
         try {
-          console.log('[Permission] Calling buildRoute API...')
           // 从后端获取路由配置
           const response = await buildRoute()
-          console.log('[Permission] Backend routes response:', response)
           let accessedRoutes: RouteRecordRaw[] = response.data
 
           if (!accessedRoutes || accessedRoutes.length === 0) {
-            console.warn('[Permission] No routes returned from backend, using default routes')
             // 使用默认路由作为fallback
             accessedRoutes = filterAsyncRouter(DEFAULT_ROUTES)
             this.SET_ROUTES(accessedRoutes)
@@ -140,14 +135,10 @@ export const usePermissionStore = defineStore('permission', {
 
           // 转换路由组件
           accessedRoutes = filterAsyncRouter(accessedRoutes)
-          console.log('[Permission] Filtered routes:', accessedRoutes)
-
           this.SET_ROUTES(accessedRoutes)
           resolve(accessedRoutes)
         } catch (error) {
-          console.error('[Permission] Failed to generate routes:', error)
           // 出错时使用默认路由
-          console.warn('[Permission] Using default routes due to error')
           const accessedRoutes = filterAsyncRouter(DEFAULT_ROUTES)
           this.SET_ROUTES(accessedRoutes)
           resolve(accessedRoutes)
@@ -214,16 +205,10 @@ export function loadView(view: string) {
 
   for (const key of possibleKeys) {
     if (modules[key]) {
-      console.log(`[Permission] Found component: ${view} -> ${key}`)
       return modules[key]
     }
   }
 
-  // 如果都没找到，打印调试信息
-  console.warn(`[Permission] View component not found: ${view}`)
-  console.warn(`[Permission] Tried keys:`, possibleKeys)
-  console.warn(`[Permission] Available modules:`, Object.keys(modules))
-  console.warn(`[Permission] All available role modules:`, Object.keys(modules).filter(k => k.includes('role')))
-
+  // 如果都没找到，使用默认 404 页面
   return () => import('../views/error/404.vue')
 }

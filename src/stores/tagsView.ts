@@ -4,7 +4,7 @@ import type { RouteLocationNormalized } from 'vue-router'
 export interface TagView {
   path: string
   name: string
-  title: string
+  title?: string
   fullPath?: string
   meta?: {
     title?: string

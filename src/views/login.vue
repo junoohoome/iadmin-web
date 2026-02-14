@@ -175,7 +175,6 @@ function handleLogin() {
           getCode()
         })
     } else {
-      console.log('error submit!!')
       return false
     }
   })
