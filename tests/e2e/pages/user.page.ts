@@ -30,23 +30,15 @@ export class UserPage extends BasePage {
 
   // 操作方法
   async goto(url?: string) {
-    // Click on the user management menu item
-    // First expand "系统管理" if needed
-    const systemMenu = this.page.locator('.el-sub-menu:has-text("系统管理")');
-    if (await systemMenu.count() > 0) {
-      // Check if menu is already expanded
-      const isOpen = await systemMenu.evaluate(el => el.classList.contains('is-opened'));
-      if (!isOpen) {
-        await systemMenu.click();
-        await this.page.waitForTimeout(500);
-      }
-    }
+    // Navigate directly to the user management URL
+    // The auth fixture already loaded the routes
+    await this.page.goto(url || this.url);
 
-    // Click on "用户管理" menu item
-    await this.page.getByText('用户管理').first().click();
+    // Wait for page to load
+    await this.page.waitForLoadState('networkidle');
 
-    // Wait for the page content - use text content which is more reliable
-    await this.page.waitForSelector('text=用户账号', { timeout: 10000 });
+    // Wait for table to be attached (not necessarily visible)
+    await this.page.locator('.el-table').waitFor({ state: 'attached', timeout: 10000 });
   }
 
   async openAddDialog() {
