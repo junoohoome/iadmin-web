@@ -60,7 +60,16 @@
         <el-input v-model="form.component" style="width: 178px" placeholder="组件路径" />
       </el-form-item>
       <el-form-item label="上级类目">
-        <Treeselect v-model="form.parentId" :options="menus" style="width: 450px" placeholder="选择上级类目" />
+        <el-tree-select
+          v-model="form.parentId"
+          :data="menus"
+          :props="{ label: 'label', value: 'id', children: 'children' }"
+          check-strictly
+          :render-after-expand="false"
+          style="width: 450px"
+          placeholder="选择上级类目"
+          clearable
+        />
       </el-form-item>
     </el-form>
     <template #footer>
@@ -77,8 +86,6 @@ import { ref, watch } from 'vue'
 import { ElNotification } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
 import { add, edit, getMenusTree } from '@/api/menu'
-import Treeselect from '@riophae/vue-treeselect'
-import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import IconSelect from '@/components/IconSelect/index.vue'
 
 interface Props {
@@ -95,7 +102,13 @@ const iconSelectRef = ref()
 
 const loading = ref(false)
 const dialog = ref(false)
-const menus = ref<any[]>([])
+interface MenuTreeNode {
+  id: number
+  label: string
+  children?: MenuTreeNode[]
+}
+
+const menus = ref<MenuTreeNode[]>([])
 const formRef = ref()
 const form = ref<any>({
   menuName: '',

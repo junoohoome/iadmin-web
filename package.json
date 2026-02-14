@@ -24,10 +24,9 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
-    "@riophae/vue-treeselect": "^0.4.0",
     "@vueup/vue-quill": "^1.2.0",
-    "@vueuse/core": "^11.0.3",
-    "axios": "^1.7.7",
+    "@vueuse/core": "^14.2.1",
+    "axios": "^1.13.5",
     "echarts": "^5.5.1",
     "element-plus": "^2.9.1",
     "fast-glob": "^3.3.3",
@@ -74,11 +73,11 @@
     "typescript-eslint": "^8.14.0",
     "unplugin-auto-import": "^0.18.3",
     "unplugin-vue-components": "^0.27.4",
-    "vite": "^5.4.11",
+    "vite": "^7.3.1",
     "vite-plugin-svg-icons": "^2.0.1",
     "vitest": "^2.1.5",
     "vue-eslint-parser": "^10.2.0",
-    "vue-tsc": "^2.1.10"
+    "vue-tsc": "^3.2.4"
   },
   "engines": {
     "node": ">=18.0.0",
