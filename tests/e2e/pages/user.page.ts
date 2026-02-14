@@ -12,7 +12,7 @@ export class UserPage extends BasePage {
   readonly btnExport = () => this.page.getByRole('button', { name: /导出/i });
 
   // 输入框
-  readonly searchInput = () => this.page.getByPlaceholder(/用户账号/);
+  readonly searchInput = () => this.page.getByPlaceholder(/请输入用户账号/);
   readonly usernameInput = () => this.page.getByLabel(/用户名/);
   readonly passwordInput = () => this.page.getByLabel(/密码/);
 
@@ -30,12 +30,23 @@ export class UserPage extends BasePage {
 
   // 操作方法
   async goto(url?: string) {
-    const targetUrl = url || this.url;
+    // Click on the user management menu item
+    // First expand "系统管理" if needed
+    const systemMenu = this.page.locator('.el-sub-menu:has-text("系统管理")');
+    if (await systemMenu.count() > 0) {
+      // Check if menu is already expanded
+      const isOpen = await systemMenu.evaluate(el => el.classList.contains('is-opened'));
+      if (!isOpen) {
+        await systemMenu.click();
+        await this.page.waitForTimeout(500);
+      }
+    }
 
-    // For SPA, navigate using direct URL
-    await this.page.goto(targetUrl);
-    // Wait for the page to load
-    await this.page.waitForLoadState('networkidle');
+    // Click on "用户管理" menu item
+    await this.page.getByText('用户管理').first().click();
+
+    // Wait for the page content - use text content which is more reliable
+    await this.page.waitForSelector('text=用户账号', { timeout: 10000 });
   }
 
   async openAddDialog() {
