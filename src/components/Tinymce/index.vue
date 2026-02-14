@@ -69,7 +69,7 @@ watch(
   () => props.modelValue,
   (val) => {
     if (!hasChange.value && hasInit.value) {
-      nextTick(() => (window as any).tinymce.get(tinymceId.value).setContent(val || ''))
+      nextTick(() => window.tinymce.get(tinymceId.value).setContent(val || ''))
     }
   }
 )
@@ -79,7 +79,7 @@ onMounted(() => {
 })
 
 onActivated(() => {
-  if ((window as any).tinymce) {
+  if (window.tinymce) {
     initTinymce()
   }
 })
@@ -105,7 +105,7 @@ function init() {
 
 function initTinymce() {
   const _this = fullscreen
-  ;(window as any).tinymce.init({
+  ;window.tinymce.init({
     selector: `#${tinymceId.value}`,
     language: languageTypeList['zh'],
     height: props.height,
@@ -143,7 +143,7 @@ function initTinymce() {
 }
 
 function destroyTinymce() {
-  const tinymce = (window as any).tinymce.get(tinymceId.value)
+  const tinymce = window.tinymce.get(tinymceId.value)
   if (fullscreen.value) {
     tinymce.execCommand('mceFullScreen')
   }
@@ -154,16 +154,16 @@ function destroyTinymce() {
 }
 
 function setContent(value: string) {
-  ;(window as any).tinymce.get(tinymceId.value).setContent(value)
+  ;window.tinymce.get(tinymceId.value).setContent(value)
 }
 
 function getContent() {
-  return (window as any).tinymce.get(tinymceId.value).getContent()
+  return window.tinymce.get(tinymceId.value).getContent()
 }
 
 function imageSuccessCBK(arr: any[]) {
   arr.forEach((v) => {
-    ;(window as any).tinymce.get(tinymceId.value).insertContent(`<img class="wscnph" src="${v.url}" >`)
+    ;window.tinymce.get(tinymceId.value).insertContent(`<img class="wscnph" src="${v.url}" >`)
   })
 }
 

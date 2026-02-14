@@ -52,7 +52,7 @@
     </el-form>
     <!--  底部  -->
     <div v-if="settingsStore.showFooter" id="el-login-footer">
-      <span v-html="settingsStore.footerTxt" />
+      <span>{{ settingsStore.footerTxt }}</span>
       <span> ⋅ </span>
       <a href="http://www.beian.miit.gov.cn" target="_blank">{{ settingsStore.caseNumber }}</a>
     </div>
@@ -149,9 +149,8 @@ function handleLogin() {
       uuid: loginForm.value.uuid
     }
 
-    if (user.password !== cookiePass.value) {
-      user.password = encrypt(user.password)
-    }
+    // 始终加密密码后再发送到后端
+    user.password = encrypt(user.password)
 
     if (valid) {
       loading.value = true

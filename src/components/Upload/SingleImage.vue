@@ -59,12 +59,12 @@ function emitInput(val: string) {
   emit('update:modelValue', val)
 }
 
-function handleImageSuccess(response: any) {
+function handleImageSuccess(response: ApiResponse<{ filePath: string }>) {
   if (response.code === 200) {
     emitInput(response.data.filePath)
   } else {
     ElNotification({
-      title: response.msg,
+      title: response.msg || '上传失败',
       type: 'error',
       duration: 2000
     })

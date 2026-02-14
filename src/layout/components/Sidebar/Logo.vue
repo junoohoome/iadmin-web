@@ -14,23 +14,16 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+
 interface Props {
   collapse: boolean
 }
 
 defineProps<Props>()
-</script>
 
-<script lang="ts">
-export default {
-  name: 'SidebarLogo',
-  data() {
-    return {
-      title: 'IAdmin后台管理',
-      logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
-    }
-  }
-}
+const title = ref('IAdmin后台管理')
+const logo = ref('https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png')
 </script>
 
 <style lang="scss" scoped>

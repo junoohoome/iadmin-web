@@ -157,13 +157,13 @@ export function filterAsyncRouter(routes: MenuItem[]): RouteRecordRaw[] {
       // Convert hidden/visible from string to boolean
       // Backend sends: hidden="0" (visible) or hidden="1" (hidden)
       // Also handle visible field: visible="0" (hidden) or visible="1" (visible)
-      const hiddenValue = (route as any).hidden
+      const hiddenValue = route.hidden
       if (typeof hiddenValue === 'string') {
-        (route as any).hidden = hiddenValue === '1'
+        (route as MenuItem).hidden = hiddenValue === '1'
       } else if (typeof route.visible === 'string') {
         // If hidden is not present, convert visible to hidden
         // visible="0" means hidden=true, visible="1" means hidden=false
-        (route as any).hidden = route.visible === '0'
+        (route as MenuItem).hidden = route.visible === '0'
       }
 
       // Fix child routes: convert absolute paths to relative paths
@@ -193,8 +193,10 @@ export function filterAsyncRouter(routes: MenuItem[]): RouteRecordRaw[] {
  */
 const modules = import.meta.glob('../views/**/*.vue')
 
-// 打印所有可用的模块路径用于调试
-console.log('[Permission] Available view modules:', Object.keys(modules).map(k => k.replace('../views/', '')))
+// 调试模式下打印可用的模块路径
+if (import.meta.env.DEV) {
+  console.log('[Permission] Available view modules:', Object.keys(modules).map(k => k.replace('../views/', '')))
+}
 
 export function loadView(view: string) {
   // 尝试多种路径格式 - 使用相对路径

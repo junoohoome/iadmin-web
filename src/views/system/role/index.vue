@@ -127,7 +127,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted } from 'vue'
 import { ElMessage, ElNotification } from 'element-plus'
 import { Search, Plus, Check } from '@element-plus/icons-vue'
 import Edit from './edit.vue'
@@ -205,29 +205,16 @@ function subDelete(id: string) {
 
 function add() {
   isAdd.value = true
-  // 延迟执行，确保 Edit 组件已加载
-  nextTick(() => {
-    const form = formRef.value
-    if (form && form.initForm) {
-      form.dialog = true
-      form.initForm()
-    } else {
-      ElNotification.error('编辑组件未准备好')
-    }
-  })
+  const form = formRef.value
+  form.dialog = true
+  form.initForm()
 }
 
 function edit(row: Role) {
   isAdd.value = false
-  nextTick(() => {
-    const form = formRef.value
-    if (form && form.initForm) {
-      form.initForm(row)
-      form.dialog = true
-    } else {
-      ElNotification.error('编辑组件未准备好')
-    }
-  })
+  const form = formRef.value
+  form.initForm(row)
+  form.dialog = true
 }
 
 function handleQuery() {
