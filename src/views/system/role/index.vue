@@ -15,11 +15,9 @@
       />
       <el-button class="filter-item" type="success" :icon="Search" @click="handleQuery">搜索</el-button>
       <!-- 新增 -->
-      <div v-permission="['admin', 'role:add']" style="display: inline-block; margin: 0px 2px">
-        <el-button class="filter-item" type="primary" :icon="Plus" @click="add">
-          新增
-        </el-button>
-      </div>
+      <el-button v-if="checkPermission(['admin', 'role:add'])" class="filter-item" type="primary" :icon="Plus" @click="add">
+        新增
+      </el-button>
     </div>
     <el-row :gutter="15">
       <!--角色管理-->
@@ -97,7 +95,7 @@
                 <span class="role-span">菜单分配</span>
               </el-tooltip>
               <el-button
-                v-permission="['admin', 'role:edit']"
+                v-if="checkPermission(['admin', 'role:edit'])"
                 :disabled="!showButton"
                 :loading="menuLoading"
                 :icon="Check"
@@ -112,7 +110,6 @@
           <el-tree
             ref="menuTreeRef"
             :data="menus"
-            :default-checked-keys="menuIds"
             :props="defaultProps"
             check-strictly
             accordion
@@ -126,7 +123,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { ElMessage, ElNotification } from 'element-plus'
 import { Search, Plus, Check } from '@element-plus/icons-vue'
 import Edit from './edit.vue'
@@ -238,6 +235,9 @@ function handleCurrentChange(row: Role) {
 function getMenuIds(roleId: string) {
   getMenuIdsByRoleId(roleId).then((res) => {
     menuIds.value = res.data
+    nextTick(() => {
+      menuTreeRef.value?.setCheckedKeys(menuIds.value)
+    })
   })
 }
 
