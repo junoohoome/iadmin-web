@@ -8,7 +8,7 @@
       "
     >
       <AppLink v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
-        <el-menu-item
+        <ElMenuItem
           :index="resolvePath(onlyOneChild.path)"
           :class="{ 'submenu-title-noDropdown': !isNest }"
         >
@@ -16,11 +16,11 @@
             :icon="onlyOneChild.meta.icon || (item.meta && item.meta.icon)"
             :title="onlyOneChild.meta.title"
           />
-        </el-menu-item>
+        </ElMenuItem>
       </AppLink>
     </template>
 
-    <el-submenu
+    <ElSubMenu
       v-else
       ref="subMenu"
       :index="resolvePath(item.path)"
@@ -41,7 +41,7 @@
         :base-path="resolvePath(child.path)"
         class="nest-menu"
       />
-    </el-submenu>
+    </ElSubMenu>
   </div>
 </template>
 
