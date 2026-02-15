@@ -70,3 +70,6 @@ coverage/
 /test-results/
 /tests/
 /playwright-report/
+
+# Git worktrees
+.worktrees/
