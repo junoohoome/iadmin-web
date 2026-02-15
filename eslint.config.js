@@ -1,92 +1,78 @@
 import js from "@eslint/js";
 import ts from "typescript-eslint";
-import vue from "eslint-plugin-vue";
-import * as parserVue from "vue-eslint-parser";
-import configPrettier from "eslint-config-prettier";
-import pluginPrettier from "eslint-plugin-prettier";
+import eslintPluginVue from "eslint-plugin-vue";
+import eslintConfigPrettier from "eslint-config-prettier";
+import eslintPluginPrettier from "eslint-plugin-prettier";
 import globals from "globals";
 
-export default [
+export default ts.config(
+  // 忽略的文件
   {
-    name: "app/files-to-lint",
-    files: ["**/*.{ts,mts,tsx,vue}"],
-    ignores: ["build/**/*.js", "src/assets/**", "public/**", "dist/**"],
+    ignores: [
+      "*.d.ts",
+      "**/coverage",
+      "**/dist",
+      "build/**",
+      "src/assets/**",
+      "public/**",
+    ],
   },
 
-  {
-    name: "app/js-to-lint",
-    files: ["**/*.{js,cjs,mjs}"],
-    rules: {
-      ...js.configs.recommended.rules,
-    },
-  },
+  // JavaScript 推荐配置
+  js.configs.recommended,
 
+  // TypeScript 推荐配置
+  ...ts.configs.recommended,
+
+  // Vue 推荐配置
+  ...eslintPluginVue.configs["flat/recommended"],
+
+  // TypeScript + Vue 文件配置
   {
-    name: "app/vue-to-lint",
-    files: ["**/*.vue"],
+    files: ["**/*.{ts,tsx,vue}"],
     languageOptions: {
-      parser: parserVue,
-      parserOptions: {
-        ecmaVersion: "latest",
-        sourceType: "module",
-        ecmaFeatures: {
-          jsx: true,
-        },
-        parser: ts.parser,
-      },
+      ecmaVersion: "latest",
+      sourceType: "module",
       globals: {
         ...globals.browser,
+        ...globals.node,
+      },
+      parserOptions: {
+        parser: ts.parser,
       },
     },
-    processor: vue.processors[".vue"],
-    plugins: {
-      vue,
-      "@typescript-eslint": ts.plugin,
-    },
     rules: {
-      ...vue.configs["vue3-recommended"].rules,
+      // TypeScript 相关规则
+      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-explicit-any": "off",
+
+      // Vue 相关规则
       "vue/multi-word-component-names": "off",
       "vue/no-v-html": "off",
     },
   },
 
+  // JavaScript 文件配置
   {
-    name: "app/typescript-to-lint",
-    files: ["**/*.{ts,mts,tsx}"],
+    files: ["**/*.{js,cjs,mjs}"],
     languageOptions: {
-      parser: ts.parser,
-      parserOptions: {
-        ecmaVersion: "latest",
-        sourceType: "module",
+      globals: {
+        ...globals.browser,
+        ...globals.node,
       },
-    },
-    plugins: {
-      "@typescript-eslint": ts.plugin,
-    },
-    rules: {
-      ...ts.configs.recommended.rules,
     },
   },
 
-  configPrettier,
+  // Prettier 配置（必须放在最后）
+  eslintConfigPrettier,
+
+  // Prettier 插件规则
   {
     plugins: {
-      prettier: pluginPrettier,
+      prettier: eslintPluginPrettier,
     },
     rules: {
       "prettier/prettier": "warn",
     },
   },
-
-  {
-    name: "app/prettier-overrides",
-    files: ["*.vue", "*.ts", "*.js"],
-    plugins: {
-      "@typescript-eslint": ts.plugin,
-    },
-    rules: {
-      "no-unused-vars": "off",
-      "@typescript-eslint/no-unused-vars": "warn",
-    },
-  },
-];
+);
