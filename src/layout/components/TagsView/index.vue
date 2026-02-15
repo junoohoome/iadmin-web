@@ -74,9 +74,18 @@ function filterAffixTags(routes: RouteRecordRaw[], basePath = "/"): TagView[] {
   let tags: TagView[] = [];
   routes.forEach((route) => {
     if (route.meta && route.meta.affix) {
-      // 避免双斜杠：如果 basePath 结尾有 / 且 route.path 以 / 开头，只取其一
-      const separator = basePath.endsWith("/") || route.path.startsWith("/") ? "" : "/";
-      const tagPath = basePath + separator + route.path;
+      // 修复路径拼接逻辑
+      let tagPath: string;
+      if (route.path.startsWith('/')) {
+        // 绝对路径，直接使用
+        tagPath = route.path;
+      } else if (basePath === '/' || basePath.endsWith('/')) {
+        // basePath 以 / 结尾，直接拼接
+        tagPath = basePath + route.path;
+      } else {
+        // 需要添加分隔符
+        tagPath = basePath + '/' + route.path;
+      }
       tags.push({
         fullPath: tagPath,
         path: tagPath,
@@ -86,9 +95,11 @@ function filterAffixTags(routes: RouteRecordRaw[], basePath = "/"): TagView[] {
       });
     }
     if (route.children) {
+      // 递归处理子路由，传递正确的 basePath
+      const childBasePath = route.path.startsWith('/') ? route.path : (basePath === '/' ? '/' + route.path : basePath + '/' + route.path);
       const tempTags = filterAffixTags(
         route.children as RouteRecordRaw[],
-        route.path,
+        childBasePath,
       );
       if (tempTags.length >= 1) {
         tags = [...tags, ...tempTags];
