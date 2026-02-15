@@ -167,9 +167,9 @@ function handleLogin() {
         .login(user)
         .then(() => {
           loading.value = false
-          // 确保 redirect 不以斜杠开头，避免双斜杠问题
-          const redirectPath = redirect.value || '/'
-          router.push(redirectPath)
+          // 确保使用字符串路径导航
+          const path = typeof redirect.value === 'string' && redirect.value ? redirect.value : '/'
+          router.push(path)
         })
         .catch(() => {
           loading.value = false
