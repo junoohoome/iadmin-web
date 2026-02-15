@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <!--表单组件-->
-    <edit ref="formRef" :is-add="isAdd" @refresh="getList" />
+    <Edit ref="formRef" :is-add="isAdd" @refresh="getList" />
     <!--工具栏-->
     <div class="filter-container">
       <!-- 搜索 -->
@@ -127,8 +127,6 @@ import { ref, onMounted, nextTick } from 'vue'
 import { ElMessage, ElNotification } from 'element-plus'
 import { Search, Plus, Check } from '@element-plus/icons-vue'
 import Edit from './edit.vue'
-// @ts-ignore
-const EditComponent = Edit as any
 import Pagination from '@/components/Pagination/index.vue'
 import checkPermission from '@/utils/permission'
 import { listRoles, updatePermissions, del, getMenuIdsByRoleId } from '@/api/role'
@@ -202,6 +200,7 @@ function subDelete(id: string) {
 function add() {
   isAdd.value = true
   const form = formRef.value
+  if (!form) return
   form.dialog = true
   form.initForm()
 }
@@ -209,6 +208,7 @@ function add() {
 function edit(row: Role) {
   isAdd.value = false
   const form = formRef.value
+  if (!form) return
   form.initForm(row)
   form.dialog = true
 }

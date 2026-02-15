@@ -175,6 +175,11 @@ function querySearch(query: string) {
 .header-search {
   font-size: 0 !important;
 
+  .svg-icon {
+    font-size: 18px;
+    cursor: pointer;
+  }
+
   .search-icon {
     cursor: pointer;
     font-size: 18px;
