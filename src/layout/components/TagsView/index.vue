@@ -196,11 +196,12 @@ function closeMenu() {
 }
 
 watch(
-  () => route,
+  () => route.path,
   () => {
     addTags();
     moveToCurrentTag();
   },
+  { flush: 'post' }
 );
 
 watch(visible, (value) => {
