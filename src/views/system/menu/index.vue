@@ -63,12 +63,12 @@
         fixed="right"
       >
         <template #default="{ row }">
-          <el-button v-permission="['admin', 'menu:edit']" size="small" type="primary" @click="handleUpdate(row)">
+          <el-button v-if="checkPermission(['admin', 'menu:edit'])" size="small" type="primary" @click="handleUpdate(row)">
             编辑
           </el-button>
           <el-popover
+            v-if="checkPermission(['admin', 'menu:del'])"
             :ref="(el: any) => popoverRefs[row.menuId] = el"
-            v-permission="['admin', 'menu:del']"
             placement="top"
             width="200"
           >

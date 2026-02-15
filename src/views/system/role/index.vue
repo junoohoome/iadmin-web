@@ -49,8 +49,7 @@
             >
               <template #default="{ row }">
                 <el-button
-                  v-if="row.roleId !== 'superadmin'"
-                  v-permission="['admin', 'role:edit']"
+                  v-if="row.roleId !== 'superadmin' && checkPermission(['admin', 'role:edit'])"
                   type="primary"
                   size="small"
                   @click="edit(row)"
@@ -58,8 +57,8 @@
                   编辑
                 </el-button>
                 <el-popover
+                  v-if="checkPermission(['admin', 'role:del'])"
                   :ref="(el: any) => popoverRefs[row.id] = el"
-                  v-permission="['admin', 'role:del']"
                   placement="top"
                   width="180"
                 >

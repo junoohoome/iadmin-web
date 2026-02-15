@@ -52,12 +52,12 @@
               fixed="right"
             >
               <template #default="{ row }">
-                <el-button v-permission="['admin', 'dict:edit']" type="primary" size="small" @click="edit(row)">
+                <el-button v-if="checkPermission(['admin', 'dict:edit'])" type="primary" size="small" @click="edit(row)">
                   编辑
                 </el-button>
                 <el-popover
+                  v-if="checkPermission(['admin', 'dict:del'])"
                   :ref="(el: any) => popoverRefs[row.dictId] = el"
-                  v-permission="['admin', 'dict:del']"
                   placement="top"
                   width="180"
                 >
