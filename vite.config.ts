@@ -3,6 +3,7 @@ import vue from "@vitejs/plugin-vue";
 import { resolve } from "path";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
+import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
 
 /**
@@ -52,12 +53,7 @@ export default defineConfig(({ mode }) => {
       // 自动导入组件 (Element Plus)
       Components({
         resolvers: [
-          (componentName) => {
-            // Element Plus 组件自动解析
-            if (componentName.startsWith('El')) {
-              return { name: componentName, from: 'element-plus' }
-            }
-          }
+          ElementPlusResolver()
         ],
         dts: "src/components.d.ts",
       }),
