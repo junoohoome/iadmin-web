@@ -144,9 +144,34 @@ iadmin/
 - 响应: 处理 401（提示重新登录）、错误码、显示通知
 
 **权限控制:**
-- `v-permission` 指令用于按钮级访问控制
+- `checkPermission()` 函数配合 `v-if` 实现按钮级权限控制
 - 路由 meta 定义所需权限
 - 后端通过 `/user/info` 提供角色和权限
+
+## 参考文档
+
+本项目前端架构参考 [vue-element-admin](https://panjiachen.github.io/vue-element-admin-site/zh/guide/)，这是一个基于 Vue + Element UI 的后台前端解决方案。
+
+**推荐阅读:**
+- [手摸手，带你用 vue 撸后台 系列一(基础篇)](https://juejin.im/post/59097cd7a22b9d0065fb1f84)
+- [手摸手，带你用 vue 撸后台 系列二(登录权限篇)](https://juejin.im/post/591aa14f570c35006961acac)
+- [手摸手，带你用 vue 撸后台 系列三 (实战篇)](https://juejin.im/post/593121aa0ce4630057f70d35)
+
+**注意**: 本项目使用 Vue 3 + Element Plus，与 vue-element-admin (Vue 2 + Element UI) 有所不同，但架构理念相似。
+
+## 开发注意事项
+
+**权限指令:**
+- 使用 `v-if="checkPermission(['admin', 'permission:key'])"` 进行权限控制
+- 不要使用 `v-permission` 指令（会导致 Vue 3 响应式递归更新问题）
+
+**Element Plus 组件:**
+- 组件自动通过 vite.config.ts 的 Components 插件解析
+- 组件名以 `El` 开头（如 `ElMenu`、`ElSubMenu`）
+
+**递归更新问题:**
+- 不要在模板中直接修改响应式数据
+- el-tree 的 `:default-checked-keys` 避免响应式绑定，使用 `setCheckedKeys()` 方法
 
 ### API 通信
 
