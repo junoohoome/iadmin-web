@@ -47,6 +47,7 @@
 
 <script setup lang="ts">
 import { ref, computed, type PropType } from "vue";
+import { ElMenuItem, ElSubMenu } from "element-plus";
 import { isExternal } from "@/utils/validate";
 import Item from "./Item.vue";
 import AppLink from "./Link.vue";
