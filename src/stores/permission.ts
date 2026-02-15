@@ -99,22 +99,32 @@ const DEFAULT_ROUTES: MenuItem[] = [
 interface PermissionState {
   routes: RouteRecordRaw[]
   addRoutes: RouteRecordRaw[]
+  _allRoutesCache: RouteRecordRaw[] | null
 }
 
 export const usePermissionStore = defineStore('permission', {
   state: (): PermissionState => ({
     routes: [],
-    addRoutes: []
+    addRoutes: [],
+    _allRoutesCache: null
   }),
 
   getters: {
-    allRoutes: (state) => constantRoutes.concat(state.addRoutes)
+    allRoutes: (state): RouteRecordRaw[] => {
+      // 使用缓存避免每次访问都创建新数组
+      if (state._allRoutesCache) {
+        return state._allRoutesCache
+      }
+      return constantRoutes.concat(state.addRoutes)
+    }
   },
 
   actions: {
     SET_ROUTES(routes: RouteRecordRaw[]) {
       this.addRoutes = routes
       this.routes = constantRoutes.concat(routes)
+      // 更新缓存
+      this._allRoutesCache = [...constantRoutes, ...routes]
     },
 
     // 根据角色生成路由

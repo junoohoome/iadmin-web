@@ -25,6 +25,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { useAppStore, useSettingsStore, usePermissionStore } from '@/stores'
 import Logo from './Logo.vue'
@@ -35,8 +36,9 @@ const appStore = useAppStore()
 const settingsStore = useSettingsStore()
 const permissionStore = usePermissionStore()
 
-const sidebar = computed(() => appStore.sidebar)
-const permission_routes = computed(() => permissionStore.allRoutes)
+// 使用 storeToRefs 避免不必要的响应式更新
+const { sidebar } = storeToRefs(appStore)
+const { sidebarLogo } = storeToRefs(settingsStore)
 
 const activeMenu = computed(() => {
   const { meta, path } = route
@@ -46,8 +48,11 @@ const activeMenu = computed(() => {
   return path
 })
 
-const showLogo = computed(() => settingsStore.sidebarLogo)
+const showLogo = computed(() => sidebarLogo.value)
 const isCollapse = computed(() => !sidebar.value.opened)
+
+// 直接使用 store 的 getter，避免额外的 computed
+const permission_routes = computed(() => permissionStore.allRoutes)
 
 // 定义变量值
 const variables = {

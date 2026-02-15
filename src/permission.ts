@@ -10,10 +10,12 @@ import type { RouteLocationNormalized } from 'vue-router'
 
 NProgress.configure({ showSpinner: false })
 
-const whiteList = ['/login', '/401', '/system/user'] // 添加 system/user 路径到白名单
+const whiteList = ['/login', '/401', '/profile', '/profile/index'] // 白名单路径
 
 // 标记 404 路由是否已添加
 let is404Added = false
+// 标记动态路由是否已加载
+let isRoutesLoaded = false
 
 router.beforeEach(async (to: RouteLocationNormalized, _from, next) => {
   NProgress.start()
@@ -27,6 +29,12 @@ router.beforeEach(async (to: RouteLocationNormalized, _from, next) => {
       next({ path: '/' })
       NProgress.done()
     } else {
+      // 如果动态路由已加载，直接放行
+      if (isRoutesLoaded) {
+        next()
+        return
+      }
+
       const userStore = useUserStore()
       const permissionStore = usePermissionStore()
 
@@ -52,6 +60,9 @@ router.beforeEach(async (to: RouteLocationNormalized, _from, next) => {
             })
             is404Added = true
           }
+
+          // 标记路由已加载
+          isRoutesLoaded = true
 
           next({ ...to, replace: true })
         } catch (error) {

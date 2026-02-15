@@ -28,7 +28,7 @@
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item>
-              <router-link to="/user/profile">个人中心</router-link>
+              <router-link to="/profile/index">个人中心</router-link>
             </el-dropdown-item>
             <el-dropdown-item @click="setting = true">
               布局设置

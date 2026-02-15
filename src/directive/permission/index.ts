@@ -24,7 +24,8 @@ const permission: Directive = {
                           permissions.some((p) => permissionRoles.includes(p))
 
       if (!hasPermission) {
-        el.parentNode?.removeChild(el)
+        // 使用 display: none 代替 removeChild，避免 Vue DOM 不同步问题
+        el.style.display = 'none'
       }
     } else {
       throw new Error(`need permissions! Like v-permission="['admin','editor']"`)

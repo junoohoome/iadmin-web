@@ -6,10 +6,10 @@
       @click="handleClickOutside"
     />
     <Sidebar class="sidebar-container" />
-    <div :class="{ hasTagsView: needTagsView }" class="main-container">
+    <div :class="{ hasTagsView: tagsView }" class="main-container">
       <div :class="{ 'fixed-header': fixedHeader }">
         <Navbar />
-        <TagsView v-if="needTagsView" />
+        <TagsView v-if="tagsView" />
       </div>
       <AppMain />
       <RightPanel v-if="showSettings">
@@ -21,6 +21,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { storeToRefs } from "pinia";
 import { useAppStore, useSettingsStore } from "@/stores";
 import Sidebar from "./components/Sidebar/index.vue";
 import AppMain from "./components/AppMain.vue";
@@ -32,11 +33,9 @@ import RightPanel from "@/components/RightPanel/index.vue";
 const appStore = useAppStore();
 const settingsStore = useSettingsStore();
 
-const sidebar = computed(() => appStore.sidebar);
-const device = computed(() => appStore.device);
-const showSettings = computed(() => settingsStore.showSettings);
-const needTagsView = computed(() => settingsStore.tagsView);
-const fixedHeader = computed(() => settingsStore.fixedHeader);
+// 使用 storeToRefs 避免不必要的响应式更新
+const { sidebar, device } = storeToRefs(appStore);
+const { showSettings, tagsView, fixedHeader } = storeToRefs(settingsStore);
 
 const classObj = computed(() => ({
   hideSidebar: !sidebar.value.opened,

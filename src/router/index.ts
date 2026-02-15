@@ -52,13 +52,13 @@ export const constantRoutes: RouteRecordRaw[] = [
     ]
   },
   {
-    path: '/system/user',
+    path: '/profile',
     component: Layout,
     meta: { hidden: true } as RouteMeta,
-    redirect: '/system/user/profile',
+    redirect: '/profile/index',
     children: [
       {
-        path: 'profile',
+        path: 'index',
         name: 'Profile',
         component: () => import('@/views/system/user/profile/index.vue'),
         meta: {

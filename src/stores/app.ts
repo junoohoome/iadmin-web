@@ -15,7 +15,7 @@ interface AppState {
 export const useAppStore = defineStore('app', {
   state: (): AppState => ({
     sidebar: {
-      opened: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : false,
+      opened: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : true,
       withoutAnimation: false
     },
     device: 'desktop',
@@ -24,6 +24,9 @@ export const useAppStore = defineStore('app', {
 
   actions: {
     toggleSidebar() {
+      // 避免在动画期间重复触发
+      if (this.sidebar.withoutAnimation) return
+
       this.sidebar.opened = !this.sidebar.opened
       this.sidebar.withoutAnimation = false
       if (this.sidebar.opened) {
@@ -34,23 +37,33 @@ export const useAppStore = defineStore('app', {
     },
 
     closeSideBar(options: { withoutAnimation: boolean }) {
+      // 避免重复关闭
+      if (!this.sidebar.opened) return
+
       Cookies.set('sidebarStatus', '0')
       this.sidebar.opened = false
       this.sidebar.withoutAnimation = options.withoutAnimation
     },
 
     toggleDevice(device: 'desktop' | 'mobile') {
-      this.device = device
+      // 只有值变化时才更新，避免触发不必要的响应式更新
+      if (this.device !== device) {
+        this.device = device
+      }
     },
 
     setSize(size: string) {
-      this.size = size
-      Cookies.set('size', size)
+      if (this.size !== size) {
+        this.size = size
+        Cookies.set('size', size)
+      }
     }
   },
 
   persist: {
     key: 'app-store',
-    storage: localStorage
+    storage: localStorage,
+    // 只持久化必要的状态
+    pick: ['sidebar', 'size']
   }
 })
