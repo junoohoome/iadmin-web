@@ -74,7 +74,7 @@
           >
             <p>确定删除吗,如果存在下级节点则一并删除，此操作不能撤销！</p>
             <div style="text-align: right; margin: 0">
-              <el-button size="small" type="text" @click="closePopover(row.menuId)">取消</el-button>
+              <el-button size="small" link @click="closePopover(row.menuId)">取消</el-button>
               <el-button :loading="delLoading" type="primary" size="small" @click="handelDelete(row.menuId)">
                 确定
               </el-button>

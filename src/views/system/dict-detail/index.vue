@@ -37,7 +37,7 @@
             >
               <p>确定删除本条数据吗？</p>
               <div style="text-align: right; margin: 0">
-                <el-button type="text" size="small" @click="closePopover(row.id)">取消</el-button>
+                <el-button link size="small" @click="closePopover(row.id)">取消</el-button>
                 <el-button :loading="delLoading" type="primary" size="small" @click="subDelete(row.id)">
                   确定
                 </el-button>

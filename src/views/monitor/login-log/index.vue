@@ -113,11 +113,17 @@ onMounted(() => {
 /** 查询登录日志列表 */
 function getList() {
   loading.value = true
-  list(addDateRange(queryParams.value, dateRange.value)).then((response) => {
-    tableData.value = response.data.records
-    total.value = response.data.total
-    loading.value = false
-  })
+  list(addDateRange(queryParams.value, dateRange.value))
+    .then((response) => {
+      tableData.value = response.data.records
+      total.value = response.data.total
+    })
+    .catch(() => {
+      // 错误已在 request.ts 中处理
+    })
+    .finally(() => {
+      loading.value = false
+    })
 }
 
 // 登录状态字典翻译

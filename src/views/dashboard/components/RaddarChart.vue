@@ -52,14 +52,17 @@ function initChart() {
     radar: {
       radius: '66%',
       center: ['50%', '42%'],
-      splitNumber: 8,
+      splitNumber: 5,
+      axisName: {
+        color: '#333'
+      },
       indicator: [
-        { name: 'Sales', max: 10000 },
-        { name: 'Administration', max: 20000 },
-        { name: 'Information Techology', max: 20000 },
-        { name: 'Customer Support', max: 20000 },
-        { name: 'Development', max: 20000 },
-        { name: 'Marketing', max: 20000 }
+        { name: 'Sales', max: 25000 },
+        { name: 'Administration', max: 25000 },
+        { name: 'Information Techology', max: 25000 },
+        { name: 'Customer Support', max: 25000 },
+        { name: 'Development', max: 25000 },
+        { name: 'Marketing', max: 25000 }
       ]
     },
     legend: {

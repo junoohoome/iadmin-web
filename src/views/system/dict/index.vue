@@ -63,7 +63,7 @@
                 >
                   <p>此操作将删除字典与对应的字典详情，确定要删除吗？</p>
                   <div style="text-align: right; margin: 0">
-                    <el-button type="text" @click="closePopover(row.dictId)">取消</el-button>
+                    <el-button link @click="closePopover(row.dictId)">取消</el-button>
                     <el-button :loading="delLoading" type="primary" @click="subDelete(row.dictId)">确定</el-button>
                   </div>
                   <template #reference>
