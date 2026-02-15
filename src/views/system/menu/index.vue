@@ -15,7 +15,7 @@
         搜索
       </el-button>
       <el-button
-        v-permission="['admin', 'menu:add']"
+        v-if="checkPermission(['admin', 'menu:add'])"
         class="filter-item"
         type="primary"
         :icon="Plus"

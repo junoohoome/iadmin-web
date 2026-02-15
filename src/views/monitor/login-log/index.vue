@@ -24,7 +24,7 @@
       <el-button class="filter-item" :icon="Refresh" @click="resetQuery">重置</el-button>
 
       <el-button
-        v-permission="['admin', 'loginlog:remove']"
+        v-if="checkPermission(['admin', 'loginlog:remove'])"
         type="danger"
         :icon="Delete"
         :disabled="multiple"
@@ -34,7 +34,7 @@
         删除
       </el-button>
       <el-button
-        v-permission="['admin', 'loginlog:remove']"
+        v-if="checkPermission(['admin', 'loginlog:remove'])"
         type="danger"
         :icon="Delete"
         class="filter-item"
@@ -43,7 +43,7 @@
         清空
       </el-button>
       <el-button
-        v-permission="['admin', 'loginlog:export']"
+        v-if="checkPermission(['admin', 'loginlog:export'])"
         type="warning"
         :icon="Download"
         class="filter-item"
@@ -83,6 +83,7 @@ import { Search, Refresh, Delete, Download } from '@element-plus/icons-vue'
 import { list, delLoginlog, cleanLoginlog, exportLoginlog } from '@/api/login-log'
 import { parseTime, downloadFile, getDateshortcuts, addDateRange } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
+import checkPermission from '@/utils/permission'
 
 interface QueryParams {
   page: number

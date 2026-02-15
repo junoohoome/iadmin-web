@@ -14,7 +14,7 @@
         搜索
       </el-button>
       <el-button
-        v-permission="['admin', 'system:dept:add']"
+        v-if="checkPermission(['admin', 'system:dept:add'])"
         class="filter-item"
         type="primary"
         :icon="Plus"
@@ -50,7 +50,7 @@
       >
         <template #default="{ row }">
           <el-button
-            v-permission="['admin', 'system:dept:edit']"
+            v-if="checkPermission(['admin', 'system:dept:edit'])"
             type="primary"
             size="small"
             @click="handleUpdate(row)"
@@ -58,7 +58,7 @@
             编辑
           </el-button>
           <el-button
-            v-permission="['admin', 'system:dept:del']"
+            v-if="checkPermission(['admin', 'system:dept:del'])"
             type="danger"
             size="small"
             @click="handleDelete(row)"

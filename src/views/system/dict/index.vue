@@ -9,7 +9,7 @@
             <div class="clearfix">
               <span>字典列表</span>
               <el-button
-                v-permission="['admin', 'dict:add']"
+                v-if="checkPermission(['admin', 'dict:add'])"
                 class="filter-item"
                 style="float: right; padding: 4px 10px"
                 type="primary"
@@ -91,8 +91,7 @@
             <div class="clearfix">
               <span>字典详情</span>
               <el-button
-                v-show="hasDetail"
-                v-permission="['admin', 'dict:add']"
+                v-show="hasDetail && checkPermission(['admin', 'dict:add'])"
                 class="filter-item"
                 style="float: right; padding: 4px 10px"
                 type="primary"

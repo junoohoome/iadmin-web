@@ -12,6 +12,9 @@ NProgress.configure({ showSpinner: false })
 
 const whiteList = ['/login', '/401', '/system/user'] // 添加 system/user 路径到白名单
 
+// 标记 404 路由是否已添加
+let is404Added = false
+
 router.beforeEach(async (to: RouteLocationNormalized, _from, next) => {
   NProgress.start()
 
@@ -40,12 +43,15 @@ router.beforeEach(async (to: RouteLocationNormalized, _from, next) => {
             router.addRoute(route)
           })
 
-          // Add 404 catch-all route AFTER all dynamic routes
-          router.addRoute({
-            path: '/:pathMatch(.*)*',
-            component: () => import('@/views/error/404.vue'),
-            meta: { hidden: true } as any
-          })
+          // Add 404 catch-all route AFTER all dynamic routes (only once)
+          if (!is404Added) {
+            router.addRoute({
+              path: '/:pathMatch(.*)*',
+              component: () => import('@/views/error/404.vue'),
+              meta: { hidden: true } as any
+            })
+            is404Added = true
+          }
 
           next({ ...to, replace: true })
         } catch (error) {

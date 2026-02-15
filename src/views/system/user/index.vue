@@ -28,7 +28,7 @@
         搜索
       </el-button>
       <el-button
-        v-permission="['admin', 'system:user:add']"
+        v-if="checkPermission(['admin', 'system:user:add'])"
         class="filter-item"
         type="primary"
         :icon="Plus"
@@ -37,7 +37,7 @@
         新增
       </el-button>
       <el-button
-        v-permission="['admin', 'system:user:delete']"
+        v-if="checkPermission(['admin', 'system:user:delete'])"
         class="filter-item"
         type="danger"
         :icon="Delete"
@@ -79,7 +79,7 @@
       >
         <template #default="{ row }">
           <el-button
-            v-permission="['admin', 'system:user:edit']"
+            v-if="checkPermission(['admin', 'system:user:edit'])"
             type="primary"
             size="small"
             @click="handleUpdate(row)"
@@ -87,8 +87,7 @@
             编辑
           </el-button>
           <el-button
-            v-if="row.userId !== 1"
-            v-permission="['admin', 'system:user:del']"
+            v-if="row.userId !== 1 && checkPermission(['admin', 'system:user:del'])"
             type="danger"
             size="small"
             @click="handleDelete(row)"
