@@ -64,7 +64,8 @@ router.beforeEach(async (to: RouteLocationNormalized, _from, next) => {
           // 标记路由已加载
           isRoutesLoaded = true
 
-          next({ ...to, replace: true })
+          // 使用路径字符串重新导航，避免对象展开问题
+          next({ path: to.path, query: to.query, params: to.params, replace: true })
         } catch (error) {
           await userStore.resetToken()
           ElMessage.error((error as Error).message || 'Has Error')
