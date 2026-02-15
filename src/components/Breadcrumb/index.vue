@@ -69,13 +69,14 @@ function handleLink(item: BreadcrumbItem) {
 }
 
 watch(
-  () => route,
-  (newRoute) => {
-    if (newRoute.path.startsWith("/redirect/")) {
+  () => route.path,
+  (path) => {
+    if (path.startsWith("/redirect/")) {
       return;
     }
     getBreadcrumb();
   },
+  { flush: 'post' }
 );
 
 onMounted(() => {
