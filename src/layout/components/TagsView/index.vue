@@ -35,6 +35,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, nextTick } from "vue";
+import { storeToRefs } from "pinia";
 import {
   useRoute,
   useRouter,
@@ -59,8 +60,9 @@ const left = ref(0);
 const selectedTag = ref<TagView>({} as TagView);
 const affixTags = ref<TagView[]>([]);
 
-const visitedViews = computed(() => tagsViewStore.visitedViews);
-const routes = computed(() => permissionStore.routes);
+// 使用 storeToRefs 避免不必要的响应式更新
+const { visitedViews } = storeToRefs(tagsViewStore);
+const { routes } = storeToRefs(permissionStore);
 
 function isActive(tag: TagView) {
   return tag.path === route.path;
