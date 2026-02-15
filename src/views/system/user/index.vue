@@ -13,7 +13,7 @@
       <el-select
         v-model="queryParams.status"
         clearable
-        placeholder="请输入状态"
+        placeholder="用户状态"
         class="filter-item"
         style="width: 130px"
       >
@@ -130,13 +130,18 @@ interface QueryParams {
   status?: string
 }
 
+// 用户状态选项（固定值，不需要从字典获取）
+const statusOptions = ref<{ dictValue: string; dictLabel: string }[]>([
+  { dictValue: '0', dictLabel: '正常' },
+  { dictValue: '1', dictLabel: '停用' }
+])
+
 const formRef = ref()
 const loading = ref(true)
 const ids = ref<number[]>([])
 const multiple = ref(true)
 const total = ref(0)
 const tableData = ref<User[]>([])
-const statusOptions = ref<DictItem[]>([])
 const isAdd = ref(false)
 
 const queryParams = ref<QueryParams>({
@@ -148,8 +153,13 @@ const queryParams = ref<QueryParams>({
 
 onMounted(() => {
   getList()
+  // 从字典获取状态选项（作为备用）
   fetchDetailList('sys_user_status').then((res) => {
-    statusOptions.value = res.data
+    if (res.data && res.data.length > 0) {
+      statusOptions.value = res.data
+    }
+  }).catch(() => {
+    // 字典不存在时使用默认值，不报错
   })
 })
 

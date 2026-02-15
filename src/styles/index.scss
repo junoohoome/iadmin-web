@@ -194,6 +194,11 @@ aside {
     display: inline-block;
     vertical-align: middle;
     margin-bottom: 10px;
+
+    // 给非第一个 filter-item 添加左边距
+    &:not(:first-child) {
+      margin-left: 10px;
+    }
   }
 }
 
