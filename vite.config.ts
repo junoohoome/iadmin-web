@@ -49,9 +49,16 @@ export default defineConfig(({ mode }) => {
           filepath: "./.eslintrc-auto-import.json",
         },
       }),
-      // 自动导入组件 (Element Plus已全局导入，禁用自动导入)
+      // 自动导入组件 (Element Plus)
       Components({
-        resolvers: [],
+        resolvers: [
+          (componentName) => {
+            // Element Plus 组件自动解析
+            if (componentName.startsWith('El')) {
+              return { name: componentName, from: 'element-plus' }
+            }
+          }
+        ],
         dts: "src/components.d.ts",
       }),
       // SVG 图标插件
