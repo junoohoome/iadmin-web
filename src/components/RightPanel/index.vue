@@ -87,8 +87,10 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  const elx = rightPanel.value
-  elx?.remove()
+  // 移除事件监听器
+  window.removeEventListener('click', closeSidebar)
+  // 移除 body 上的 class
+  removeClass(document.body, 'showRightPanel')
 })
 </script>
 
