@@ -50,10 +50,12 @@ export default defineConfig(({ mode }) => {
           filepath: "./.eslintrc-auto-import.json",
         },
       }),
-      // 自动导入组件 (Element Plus)
+      // 自动导入组件 (Element Plus) - 禁用样式自动导入，使用全局样式
       Components({
         resolvers: [
-          ElementPlusResolver()
+          ElementPlusResolver({
+            importStyle: false
+          })
         ],
         dts: "src/components.d.ts",
       }),
