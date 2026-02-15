@@ -5,7 +5,7 @@
     </div>
     <div v-else>
       <!--表单组件-->
-      <edit ref="formRef" :is-add="isAdd" :dict-type="dictType" />
+      <Edit ref="formRef" :is-add="isAdd" :dict-type="dictType" />
       <!--表格渲染-->
       <el-table v-loading="loading" :data="tableData" style="width: 100%">
         <el-table-column label="字典类型">
@@ -56,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, nextTick } from 'vue'
 import { ElNotification } from 'element-plus'
 import Edit from './edit.vue'
 import { del, fetchDetailList } from '@/api/dict-detail'
@@ -101,17 +101,21 @@ function subDelete(id: string) {
 
 function edit(data: DictDetail) {
   isAdd.value = false
-  const form = formRef.value
-  form.form = {
-    id: data.id,
-    dictType: data.dictType,
-    dictLabel: data.dictLabel,
-    dictValue: data.dictValue,
-    status: data.status,
-    remark: data.remark,
-    dictSort: data.dictSort
-  }
-  form.dialog = true
+  nextTick(() => {
+    const form = formRef.value
+    if (form) {
+      form.form = {
+        id: data.id,
+        dictType: data.dictType,
+        dictLabel: data.dictLabel,
+        dictValue: data.dictValue,
+        status: data.status,
+        remark: data.remark,
+        dictSort: data.dictSort
+      }
+      form.dialog = true
+    }
+  })
 }
 
 function handleQuery() {

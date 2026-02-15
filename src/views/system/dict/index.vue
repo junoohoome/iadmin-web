@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <!--表单组件-->
-    <edit ref="formRef" :is-add="isAdd" />
+    <Edit ref="formRef" :is-add="isAdd" />
     <el-row :gutter="10">
       <el-col :xs="24" :sm="24" :md="10" :lg="10" :xl="10" style="margin-bottom: 10px">
         <el-card class="box-card">
@@ -110,7 +110,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { ElNotification } from 'element-plus'
 import { Search, Plus } from '@element-plus/icons-vue'
 import Edit from './edit.vue'
@@ -177,16 +177,24 @@ function subDelete(dictId: string) {
 
 function add() {
   isAdd.value = true
-  const form = formRef.value
-  form.dialog = true
+  nextTick(() => {
+    const form = formRef.value
+    if (form) {
+      form.dialog = true
+    }
+  })
 }
 
 // 编辑
 function edit(data: Dict) {
   isAdd.value = false
-  const form = formRef.value
-  form.initForm(data)
-  form.dialog = true
+  nextTick(() => {
+    const form = formRef.value
+    if (form) {
+      form.initForm(data)
+      form.dialog = true
+    }
+  })
 }
 
 // 行点击事件
