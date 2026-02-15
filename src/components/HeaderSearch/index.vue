@@ -59,17 +59,17 @@ const headerSearchSelect = ref();
 
 const routes = computed(() => permissionStore.allRoutes);
 
+// 监听 routes 变化时更新 searchPool
 watch(
-  searchPool,
-  (list) => {
-    searchPool.value = generateRoutes(list);
+  routes,
+  (newRoutes) => {
+    if (newRoutes && newRoutes.length > 0) {
+      searchPool.value = generateRoutes(newRoutes);
+      initFuse(searchPool.value);
+    }
   },
   { immediate: true },
 );
-
-watch(searchPool, (list) => {
-  initFuse(list);
-});
 
 watch(show, (value) => {
   if (value) {
