@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="isExternal"
+    v-if="isExternalLink"
     :style="styleExternalIcon"
     class="svg-external-icon svg-icon"
     v-bind="$attrs"
