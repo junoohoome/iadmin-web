@@ -68,7 +68,6 @@ coverage/
 *.patch
 *.diff
 /test-results/
-/tests/
 /playwright-report/
 
 # Git worktrees
