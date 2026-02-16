@@ -3,7 +3,7 @@ import type { ApiResponse, DictData } from '@/types'
 
 // 字典详情表单数据
 export interface DictDetailFormData {
-  dictCode?: number
+  id?: number
   dictSort: number
   dictLabel: string
   dictValue: string

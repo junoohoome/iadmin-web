@@ -85,9 +85,9 @@ function closePopover(id: string) {
   popoverRefs.value[id]?.doClose()
 }
 
-function subDelete(id: string) {
+function subDelete(id: number) {
   delLoading.value = true
-  del(id).then((res) => {
+  del([id]).then((res) => {
     delLoading.value = false
     closePopover(id)
     getList()

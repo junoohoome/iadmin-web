@@ -126,7 +126,7 @@ export type Dict = DictType;
 
 // 字典数据
 export interface DictData {
-  dictCode: number;
+  id: number;
   dictSort: number;
   dictLabel: string;
   dictValue: string;

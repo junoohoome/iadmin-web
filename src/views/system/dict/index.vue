@@ -161,9 +161,9 @@ function closePopover(dictId: string) {
 }
 
 // 删除
-function subDelete(dictId: string) {
+function subDelete(dictId: number) {
   delLoading.value = true
-  del(dictId).then((res) => {
+  del([dictId]).then((res) => {
     delLoading.value = false
     closePopover(dictId)
     getList()
