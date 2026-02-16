@@ -215,7 +215,7 @@ function handleQuery() {
 
 function handleAddDetail() {
   dictDetailRef.value.isAdd = true
-  dictDetailRef.value.dialog = true
   dictDetailRef.value.resetForm()
+  dictDetailRef.value.setDialog(true)
 }
 </script>

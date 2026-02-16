@@ -122,10 +122,28 @@ function handleQuery() {
   getList()
 }
 
+function resetForm() {
+  formRef.value?.resetForm()
+}
+
+function getDialog() {
+  return formRef.value?.dialog
+}
+
+function setDialog(val: boolean) {
+  if (formRef.value) {
+    formRef.value.dialog = val
+  }
+}
+
 defineExpose({
   dictType,
   dictName,
-  getList
+  getList,
+  isAdd,
+  resetForm,
+  getDialog,
+  setDialog
 })
 </script>
 
