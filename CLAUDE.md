@@ -173,6 +173,13 @@ iadmin/
 - 不要在模板中直接修改响应式数据
 - el-tree 的 `:default-checked-keys` 避免响应式绑定，使用 `setCheckedKeys()` 方法
 
+**SVG 图标使用:**
+- 使用 `vite-plugin-svg-icons` 插件，配置在 `vite.config.ts`
+- 图标文件放在 `src/icons/svg/` 目录
+- 使用方式: `<SvgIcon icon-class="search" />`
+- `icons/index.ts` 必须导入 `virtual:svg-icons-register` 才能注册图标
+- `SvgIcon` 组件中判断外部链接应使用 `isExternalLink` computed 变量，而非 `isExternal` 函数
+
 ### API 通信
 
 **前端 → 后端代理:**
