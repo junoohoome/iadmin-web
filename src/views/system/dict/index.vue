@@ -9,7 +9,7 @@
             <div class="clearfix">
               <span>字典列表</span>
               <el-button
-                v-if="checkPermission(['admin', 'dict:add'])"
+                v-if="checkPermission(['admin', 'system:dict:add'])"
                 class="filter-item"
                 style="float: right; padding: 4px 10px"
                 type="primary"
@@ -45,33 +45,24 @@
             <el-table-column :show-overflow-tooltip="true" prop="dictType" label="字典类型" />
             <el-table-column :show-overflow-tooltip="true" prop="remark" label="描述" />
             <el-table-column
-              v-if="checkPermission(['admin', 'dict:edit', 'dict:del'])"
+              v-if="checkPermission(['admin', 'system:dict:edit', 'system:dict:del'])"
               label="操作"
               width="150px"
               align="center"
               fixed="right"
             >
               <template #default="{ row }">
-                <el-button v-if="checkPermission(['admin', 'dict:edit'])" type="primary" size="small" @click="edit(row)">
+                <el-button v-if="checkPermission(['admin', 'system:dict:edit'])" type="primary" size="small" @click="edit(row)">
                   编辑
                 </el-button>
-                <el-popover
-                  v-if="checkPermission(['admin', 'dict:del'])"
-                  :ref="(el: any) => popoverRefs[row.dictId] = el"
-                  placement="top"
-                  width="180"
+                <el-button
+                  v-if="checkPermission(['admin', 'system:dict:del'])"
+                  type="danger"
+                  size="small"
+                  @click="handleDelete(row)"
                 >
-                  <p>此操作将删除字典与对应的字典详情，确定要删除吗？</p>
-                  <div style="text-align: right; margin: 0">
-                    <el-button link @click="closePopover(row.dictId)">取消</el-button>
-                    <el-button :loading="delLoading" type="primary" @click="subDelete(row.dictId)">确定</el-button>
-                  </div>
-                  <template #reference>
-                    <el-button type="danger" size="small">
-                      删除
-                    </el-button>
-                  </template>
-                </el-popover>
+                  删除
+                </el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -91,7 +82,7 @@
             <div class="clearfix">
               <span>字典详情</span>
               <el-button
-                v-show="hasDetail && checkPermission(['admin', 'dict:add'])"
+                v-show="hasDetail && checkPermission(['admin', 'system:dict:add'])"
                 class="filter-item"
                 style="float: right; padding: 4px 10px"
                 type="primary"
@@ -111,7 +102,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue'
-import { ElNotification } from 'element-plus'
+import { ElNotification, ElMessageBox } from 'element-plus'
 import { Search, Plus } from '@element-plus/icons-vue'
 import Edit from './edit.vue'
 import DictDetail from '../dict-detail/index.vue'
@@ -128,7 +119,6 @@ interface QueryParams {
 
 const formRef = ref()
 const dictDetailRef = ref()
-const popoverRefs = ref<Record<string, any>>({})
 
 const loading = ref(true)
 const tableData = ref<Dict[]>([])
@@ -139,7 +129,6 @@ const queryParams = ref<QueryParams>({
   dictName: null
 })
 const isAdd = ref(false)
-const delLoading = ref(false)
 const hasDetail = ref(false)
 
 onMounted(() => {
@@ -156,22 +145,27 @@ function getList() {
   })
 }
 
-function closePopover(dictId: string) {
-  popoverRefs.value[dictId]?.doClose()
-}
-
 // 删除
-function subDelete(dictId: number) {
-  delLoading.value = true
-  del([dictId]).then((res) => {
-    delLoading.value = false
-    closePopover(dictId)
-    getList()
-    ElNotification({
-      title: '删除成功',
-      type: 'success',
-      duration: 2500
+function handleDelete(row: Dict) {
+  ElMessageBox.confirm(
+    '此操作将删除字典与对应的字典详情，确定要删除吗？',
+    '警告',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }
+  ).then(() => {
+    del([row.dictId]).then(() => {
+      getList()
+      ElNotification({
+        title: '删除成功',
+        type: 'success',
+        duration: 2500
+      })
     })
+  }).catch(() => {
+    // 用户取消删除
   })
 }
 

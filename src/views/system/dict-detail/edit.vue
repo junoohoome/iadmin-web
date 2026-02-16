@@ -15,7 +15,10 @@
         <el-input v-model="form.dictValue" style="width: 370px" />
       </el-form-item>
       <el-form-item label="状态" prop="status">
-        <el-input-number v-model.number="form.status" />
+        <el-radio-group v-model="form.status">
+          <el-radio value="0">正常</el-radio>
+          <el-radio value="1">停用</el-radio>
+        </el-radio-group>
       </el-form-item>
       <el-form-item label="描述" prop="remark">
         <el-input v-model="form.remark" />
@@ -55,18 +58,18 @@ const loading = ref(false)
 const dialog = ref(false)
 const formRef = ref()
 const form = ref({
-  id: '',
+  id: undefined as number | undefined,
   dictLabel: '',
   dictType: '',
   dictValue: '',
-  status: '',
+  status: '0',
   dictSort: 1,
   remark: ''
 })
 
 const rules = {
-  label: [{ required: true, message: '请输入字典标签', trigger: 'blur' }],
-  sort: [{ required: true, message: '请输入序号', trigger: 'blur', type: 'number' }]
+  dictLabel: [{ required: true, message: '请输入字典标签', trigger: 'blur' }],
+  dictSort: [{ required: true, message: '请输入序号', trigger: 'blur', type: 'number' }]
 }
 
 function cancel() {
@@ -120,13 +123,13 @@ function resetForm() {
   dialog.value = false
   formRef.value?.resetFields()
   form.value = {
-    id: '',
+    id: undefined,
     dictType: '',
     dictLabel: '',
     dictValue: '',
-    status: '',
+    status: '0',
     remark: '',
-    dictSort: '999'
+    dictSort: 1
   }
 }
 

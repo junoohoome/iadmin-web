@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="dictName === ''">
+    <div v-if="!dictType">
       <div class="my-code">点击字典查看详情</div>
     </div>
     <div v-else>
@@ -9,45 +9,38 @@
       <!--表格渲染-->
       <el-table v-loading="loading" :data="tableData" style="width: 100%">
         <el-table-column label="字典类型">
-          <template>
+          <template #default>
             {{ dictType }}
           </template>
         </el-table-column>
         <el-table-column prop="dictLabel" label="字典标签" />
         <el-table-column prop="dictValue" label="字典值" />
-        <el-table-column prop="status" label="状态" />
+        <el-table-column prop="status" label="状态">
+          <template #default="{ row }">
+            {{ row.status === '0' ? '正常' : '停用' }}
+          </template>
+        </el-table-column>
         <el-table-column prop="dictSort" label="排序" />
         <el-table-column prop="remark" label="描述" />
         <el-table-column
-          v-if="checkPermission(['admin', 'dict:edit', 'dict:del'])"
+          v-if="checkPermission(['admin', 'system:dict:edit', 'system:dict:del'])"
           label="操作"
           width="150px"
           align="center"
           fixed="right"
         >
           <template #default="{ row }">
-            <el-button v-if="checkPermission(['admin', 'dict:edit'])" type="primary" size="small" @click="edit(row)">
+            <el-button v-if="checkPermission(['admin', 'system:dict:edit'])" type="primary" size="small" @click="edit(row)">
               编辑
             </el-button>
-            <el-popover
-              v-if="checkPermission(['admin', 'dict:del'])"
-              :ref="(el: any) => popoverRefs[row.id] = el"
-              placement="top"
-              width="180"
+            <el-button
+              v-if="checkPermission(['admin', 'system:dict:del'])"
+              type="danger"
+              size="small"
+              @click="handleDelete(row)"
             >
-              <p>确定删除本条数据吗？</p>
-              <div style="text-align: right; margin: 0">
-                <el-button link size="small" @click="closePopover(row.id)">取消</el-button>
-                <el-button :loading="delLoading" type="primary" size="small" @click="subDelete(row.id)">
-                  确定
-                </el-button>
-              </div>
-              <template #reference>
-                <el-button type="danger" size="small">
-                  删除
-                </el-button>
-              </template>
-            </el-popover>
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -57,23 +50,22 @@
 
 <script setup lang="ts">
 import { ref, nextTick } from 'vue'
-import { ElNotification } from 'element-plus'
+import { ElNotification, ElMessageBox } from 'element-plus'
 import Edit from './edit.vue'
 import { del, fetchDetailList } from '@/api/dict-detail'
 import checkPermission from '@/utils/permission'
 import type { DictDetail } from '@/types'
 
 const formRef = ref()
-const popoverRefs = ref<Record<string, any>>({})
 
 const dictType = ref('')
 const dictName = ref('')
 const loading = ref(false)
 const tableData = ref<DictDetail[]>([])
 const isAdd = ref(false)
-const delLoading = ref(false)
 
 function getList() {
+  if (!dictType.value) return
   loading.value = true
   fetchDetailList(dictType.value).then((res) => {
     tableData.value = res.data
@@ -81,21 +73,27 @@ function getList() {
   })
 }
 
-function closePopover(id: string) {
-  popoverRefs.value[id]?.doClose()
-}
-
-function subDelete(id: number) {
-  delLoading.value = true
-  del([id]).then((res) => {
-    delLoading.value = false
-    closePopover(id)
-    getList()
-    ElNotification({
-      title: '删除成功',
-      type: 'success',
-      duration: 2500
+// 删除
+function handleDelete(row: DictDetail) {
+  ElMessageBox.confirm(
+    '确定删除本条数据吗？',
+    '警告',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }
+  ).then(() => {
+    del([row.id]).then(() => {
+      getList()
+      ElNotification({
+        title: '删除成功',
+        type: 'success',
+        duration: 2500
+      })
     })
+  }).catch(() => {
+    // 用户取消
   })
 }
 
@@ -116,10 +114,6 @@ function edit(data: DictDetail) {
       form.dialog = true
     }
   })
-}
-
-function handleQuery() {
-  getList()
 }
 
 function resetForm() {
