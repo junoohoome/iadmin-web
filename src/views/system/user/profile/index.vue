@@ -51,7 +51,7 @@
           </template>
           <el-tabs v-model="activeTab">
             <el-tab-pane label="基本资料" name="userinfo">
-              <user-info :user="user" />
+              <UserInfoForm :user="user" />
             </el-tab-pane>
             <el-tab-pane label="修改密码" name="resetPwd">
               <reset-pwd />
@@ -66,7 +66,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import UserAvatar from './components/UserAvatar.vue'
-import UserInfoComp from './components/UserInfo.vue'
+import UserInfoForm from './components/UserInfo.vue'
 import ResetPwd from './components/ResetPwd.vue'
 import { getUserProfile } from '@/api/user'
 import type { UserInfo } from '@/types'

@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElNotification } from 'element-plus'
 import { updateUserProfile } from '@/api/user'
@@ -44,6 +44,19 @@ const user = reactive<User>({
   mobile: props.user.mobile,
   email: props.user.email
 })
+
+// 监听 props.user 变化，更新本地 user
+watch(
+  () => props.user,
+  (newUser) => {
+    if (newUser) {
+      user.username = newUser.username
+      user.mobile = newUser.mobile
+      user.email = newUser.email
+    }
+  },
+  { immediate: true, deep: true }
+)
 
 const rules = {
   username: [
