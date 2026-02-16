@@ -69,7 +69,10 @@ watch(
   showVal,
   (value) => {
     if (value && !props.clickNotClose) {
-      addEventClick()
+      // 使用 setTimeout 延迟添加事件监听，确保当前点击事件完全结束后再监听
+      setTimeout(() => {
+        addEventClick()
+      }, 0)
     }
     if (value) {
       addClass(document.body, 'showRightPanel')

@@ -27,7 +27,9 @@ function moveToTarget(currentTag: HTMLElement) {
 
   const $container = scrollContainer.value.$el as HTMLElement
   const $containerWidth = $container.offsetWidth
-  const $scrollWrapper = scrollContainer.value.$refs.wrap as HTMLElement
+  const $scrollWrapper = scrollContainer.value.$refs?.wrap as HTMLElement | undefined
+
+  if (!$scrollWrapper) return
 
   // 获取父组件中的 tag 引用
   const tags = (currentTag.parentElement?.children || []) as HTMLElement[]

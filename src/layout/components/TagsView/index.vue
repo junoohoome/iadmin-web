@@ -52,7 +52,6 @@ const tagsViewStore = useTagsViewStore();
 const permissionStore = usePermissionStore();
 
 const scrollPane = ref<InstanceType<typeof ScrollPane>>();
-const tag = ref<HTMLElement[]>([]);
 
 const visible = ref(false);
 const top = ref(0);
@@ -130,16 +129,15 @@ function addTags() {
 
 function moveToCurrentTag() {
   nextTick(() => {
-    for (const tag of tag.value) {
-      if ((tag as any).to.path === route.path) {
-        scrollPane.value?.moveToTarget(tag as any);
-        if ((tag as any).to.fullPath !== route.fullPath) {
-          tagsViewStore.updateVisitedView(route as unknown as TagView);
-        }
-        break;
+    const tags = document.querySelectorAll('.tags-view-item')
+    for (const tagEl of tags) {
+      const href = tagEl.getAttribute('href')
+      if (href && href.includes(route.path)) {
+        scrollPane.value?.moveToTarget(tagEl as HTMLElement)
+        break
       }
     }
-  });
+  })
 }
 
 function refreshSelectedTag(view: TagView) {

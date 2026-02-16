@@ -11,7 +11,7 @@
 
     <div class="right-menu">
       <template v-if="device !== 'mobile'">
-        <HeaderSearch id="header-search" class="right-menu-item" />
+        <HeaderSearch id="header-search" class="right-menu-item hover-effect" />
 
         <Screenfull id="screenfull" class="right-menu-item hover-effect" />
 
@@ -20,21 +20,21 @@
         </el-tooltip>
       </template>
 
-      <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
+      <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click" @command="handleCommand">
         <div class="avatar-wrapper">
           <el-avatar :src="avatar" class="user-avatar" />
           <CaretBottom class="el-icon-caret-bottom" />
         </div>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item>
-              <router-link to="/profile/index">个人中心</router-link>
+            <el-dropdown-item command="profile">
+              个人中心
             </el-dropdown-item>
-            <el-dropdown-item @click="setting = true">
+            <el-dropdown-item command="setting">
               布局设置
             </el-dropdown-item>
-            <el-dropdown-item divided @click="logout">
-              <span>退出登录</span>
+            <el-dropdown-item divided command="logout">
+              退出登录
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
@@ -78,6 +78,20 @@ const setting = computed({
 
 const toggleSideBar = () => {
   appStore.toggleSidebar()
+}
+
+const handleCommand = (command: string) => {
+  switch (command) {
+    case 'profile':
+      router.push('/profile/index')
+      break
+    case 'setting':
+      setting.value = true
+      break
+    case 'logout':
+      logout()
+      break
+  }
 }
 
 const logout = async () => {
@@ -131,12 +145,14 @@ const logout = async () => {
     }
 
     .right-menu-item {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       padding: 0 8px;
       height: 100%;
       font-size: 18px;
       color: #5a5e66;
-      vertical-align: text-bottom;
+      vertical-align: middle;
 
       &.hover-effect {
         cursor: pointer;
@@ -162,6 +178,7 @@ const logout = async () => {
           cursor: pointer;
           width: 40px;
           height: 40px;
+          flex-shrink: 0;
         }
 
         .el-icon-caret-bottom {
