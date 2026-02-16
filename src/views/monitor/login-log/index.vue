@@ -80,7 +80,7 @@
 import { ref, onMounted } from 'vue'
 import { ElMessageBox, ElNotification } from 'element-plus'
 import { Search, Refresh, Delete, Download } from '@element-plus/icons-vue'
-import { list, delLoginlog, cleanLoginlog, exportLoginlog } from '@/api/login-log'
+import { list as listLoginLog, delLoginlog, cleanLoginlog, exportLoginlog } from '@/api/login-log'
 import { parseTime, downloadFile, getDateshortcuts, addDateRange } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
 import checkPermission from '@/utils/permission'
@@ -113,7 +113,7 @@ onMounted(() => {
 /** 查询登录日志列表 */
 function getList() {
   loading.value = true
-  list(addDateRange(queryParams.value, dateRange.value))
+  listLoginLog(addDateRange(queryParams.value, dateRange.value))
     .then((response) => {
       tableData.value = response.data.records
       total.value = response.data.total

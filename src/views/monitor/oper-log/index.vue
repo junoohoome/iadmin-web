@@ -138,7 +138,7 @@
 import { ref, onMounted } from 'vue'
 import { ElMessageBox, ElNotification } from 'element-plus'
 import { Search, Refresh, Delete, Download } from '@element-plus/icons-vue'
-import { list, delOperlog, cleanOperlog, exportOperlog } from '@/api/oper-log'
+import { list as listOperLog, delOperlog, cleanOperlog, exportOperlog } from '@/api/oper-log'
 import { parseTime, downloadFile, getDateshortcuts, addDateRange } from '@/utils/index'
 import Pagination from '@/components/Pagination/index.vue'
 import checkPermission from '@/utils/permission'
@@ -194,7 +194,7 @@ onMounted(() => {
 /** 查询操作日志 */
 function getList() {
   loading.value = true
-  list(addDateRange(queryParams.value, dateRange.value)).then((response) => {
+  listOperLog(addDateRange(queryParams.value, dateRange.value)).then((response) => {
     list.value = response.data.records
     total.value = response.data.total
     loading.value = false
