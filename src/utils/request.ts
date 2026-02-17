@@ -79,6 +79,12 @@ service.interceptors.response.use(
       });
       return Promise.reject(new Error(errorMsg));
     } else {
+      // 检查是否有新Token返回（Token自动续期）
+      const newToken = response.headers['x-new-token']
+      if (newToken) {
+        localStorage.setItem('token', newToken)
+        console.log('Token已自动续期')
+      }
       return response.data;
     }
   },
