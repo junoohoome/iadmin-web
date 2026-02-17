@@ -28,7 +28,7 @@ export interface LoginLog {
 // 查询登录日志列表
 export function list(query: LoginLogQueryParams) {
   return request<ApiResponse<PageResult<LoginLog>>>({
-    url: '/sysLogininfor/list',
+    url: '/monitor/logininfor/list',
     method: 'get',
     params: query
   })
@@ -37,7 +37,7 @@ export function list(query: LoginLogQueryParams) {
 // 删除登录日志
 export function delLoginlog(ids: number[]) {
   return request<ApiResponse<void>>({
-    url: `/sysLogininfor/${ids.join(',')}`,
+    url: `/monitor/logininfor/${ids.join(',')}`,
     method: 'delete'
   })
 }
@@ -45,7 +45,7 @@ export function delLoginlog(ids: number[]) {
 // 清空登录日志
 export function cleanLoginlog() {
   return request<ApiResponse<void>>({
-    url: '/sysLogininfor/clean',
+    url: '/monitor/logininfor/clean',
     method: 'delete'
   })
 }
@@ -53,7 +53,7 @@ export function cleanLoginlog() {
 // 导出登录日志
 export function exportLoginlog(query: LoginLogQueryParams) {
   return request<Blob>({
-    url: '/sysLogininfor/export',
+    url: '/monitor/logininfor/export',
     method: 'get',
     params: query,
     responseType: 'blob'

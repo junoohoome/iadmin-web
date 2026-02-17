@@ -37,7 +37,7 @@ export interface OperLog {
 // 查询操作日志列表
 export function list(query: OperLogQueryParams) {
   return request<ApiResponse<PageResult<OperLog>>>({
-    url: '/sysOperLog/list',
+    url: '/monitor/operlog/list',
     method: 'get',
     params: query
   })
@@ -46,7 +46,7 @@ export function list(query: OperLogQueryParams) {
 // 删除操作日志
 export function delOperlog(ids: number[]) {
   return request<ApiResponse<void>>({
-    url: `/sysOperLog/${ids.join(',')}`,
+    url: `/monitor/operlog/${ids.join(',')}`,
     method: 'delete'
   })
 }
@@ -54,7 +54,7 @@ export function delOperlog(ids: number[]) {
 // 清空操作日志
 export function cleanOperlog() {
   return request<ApiResponse<void>>({
-    url: '/sysOperLog/clean',
+    url: '/monitor/operlog/clean',
     method: 'delete'
   })
 }
@@ -62,7 +62,7 @@ export function cleanOperlog() {
 // 导出操作日志
 export function exportOperlog(query: OperLogQueryParams) {
   return request<Blob>({
-    url: '/sysOperLog/export',
+    url: '/monitor/operlog/export',
     method: 'get',
     params: query,
     responseType: 'blob'
