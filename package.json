@@ -26,27 +26,19 @@
     "@element-plus/icons-vue": "^2.3.1",
     "@vueuse/core": "^14.2.1",
     "axios": "^1.13.5",
-    "braces": "^3.0.3",
-    "decode-uri-component": "^0.4.1",
     "echarts": "^6.0.0",
     "element-plus": "^2.13.2",
-    "fast-glob": "^3.3.3",
     "fuse.js": "^7.0.0",
     "glob": "^13.0.3",
     "js-cookie": "^3.0.5",
     "jsencrypt": "^3.3.2",
-    "json5": "^2.2.3",
-    "normalize.css": "^8.0.1",
     "nprogress": "^0.2.0",
     "path-to-regexp": "^8.1.0",
     "pinia": "^3.0.1",
     "pinia-plugin-persistedstate": "^4.1.2",
-    "playwright-core": "^1.58.2",
     "screenfull": "^6.0.2",
     "vue": "^3.5.13",
-    "vue-count-to": "^1.0.13",
     "vue-cropper": "^0.6.5",
-    "vue-i18n": "^11.2.8",
     "vue-router": "^4.4.5"
   },
   "devDependencies": {
@@ -94,9 +86,7 @@
     "not ie 11"
   ],
   "overrides": {
-    "braces": "^3.0.3",
     "minimist": "^1.2.8",
-    "json5": "^2.2.3",
     "loader-utils": "^3.3.1",
     "postcss": "^8.4.49",
     "micromatch": "^4.0.8"
