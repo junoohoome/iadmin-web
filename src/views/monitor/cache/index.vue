@@ -193,10 +193,13 @@ function getStatsInfo() {
   })
 }
 
-/** 格式化内存大小 */
+/** 格式化内存大小（转换为 MB） */
 function formatMemory(memory: string | undefined) {
-  if (!memory) return '0 B'
-  return memory
+  if (!memory) return '0 MB'
+  const bytes = parseInt(memory, 10)
+  if (isNaN(bytes) || bytes === 0) return '0 MB'
+  const mb = bytes / (1024 * 1024)
+  return mb.toFixed(2) + ' MB'
 }
 
 /** 根据类型获取标签样式 */

@@ -169,6 +169,9 @@ function getList() {
   getUserList(queryParams.value).then((res) => {
     tableData.value = res.data.records
     total.value = res.data.total
+  }).catch(() => {
+    // 查询失败时不做额外处理，request.ts 已统一处理错误提示
+  }).finally(() => {
     loading.value = false
   })
 }
