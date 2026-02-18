@@ -54,8 +54,6 @@
 
 ```bash
 npm install
-# 或
-bun install
 ```
 
 ### 开发
