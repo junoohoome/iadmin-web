@@ -51,6 +51,7 @@ import { ref } from 'vue'
 import { ElNotification } from 'element-plus'
 import { addUser, updateUser } from '@/api/user'
 import { getRoleOptions } from '@/api/role'
+import { createPasswordValidator } from '@/utils/passwordValidator'
 import type { DictItem } from '@/types'
 
 interface RoleOption {
@@ -97,7 +98,7 @@ const rules = {
   ],
   password: [
     { required: true, message: '请输入用户密码', trigger: 'blur' },
-    { min: 6, message: '至少6位字符', trigger: 'change' }
+    { validator: createPasswordValidator(() => form.value.userName), trigger: 'blur' }
   ],
   mobile: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码', trigger: 'blur' }],
   email: [{ type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }],

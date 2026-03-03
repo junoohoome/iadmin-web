@@ -5,7 +5,7 @@ import axios, {
 } from "axios";
 import { ElMessageBox, ElMessage, ElNotification } from "element-plus";
 import { useUserStore } from "@/stores/user";
-import { getToken } from "@/utils/auth";
+import { getToken, setToken } from "@/utils/auth";
 
 // 创建 axios 实例
 const service: AxiosInstance = axios.create({
@@ -82,7 +82,7 @@ service.interceptors.response.use(
       // 检查是否有新Token返回（Token自动续期）
       const newToken = response.headers['x-new-token']
       if (newToken) {
-        localStorage.setItem('token', newToken)
+        setToken(newToken)
         console.log('Token已自动续期')
       }
       return response.data;

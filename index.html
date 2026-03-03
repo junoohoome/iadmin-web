@@ -4,6 +4,14 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <!-- 安全响应头 - 防止点击劫持 -->
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+    <!-- 防止 MIME 类型嗅探 -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <!-- XSS 保护 -->
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <!-- Referrer 策略 -->
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <link rel="icon" href="/favicon.ico">
     <title><%= VITE_APP_TITLE %></title>
   </head>

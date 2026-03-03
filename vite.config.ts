@@ -83,6 +83,19 @@ export default defineConfig(({ mode }) => {
           rewrite: (path) => path.replace(/^\/dev-api/, ""),
         },
       },
+      // 安全响应头配置
+      headers: {
+        // 防止点击劫持
+        'X-Frame-Options': 'SAMEORIGIN',
+        // 防止 MIME 类型嗅探
+        'X-Content-Type-Options': 'nosniff',
+        // XSS 保护
+        'X-XSS-Protection': '1; mode=block',
+        // Referrer 策略
+        'Referrer-Policy': 'strict-origin-when-cross-origin',
+        // 禁用不必要的浏览器功能
+        'Permissions-Policy': 'geolocation=(), microphone=(), camera=()',
+      },
     },
     build: {
       target: "es2020",

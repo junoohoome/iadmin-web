@@ -22,6 +22,7 @@ import { useRouter } from 'vue-router'
 import { ElNotification } from 'element-plus'
 import { updateUserPwd } from '@/api/user'
 import { useTagsViewStore } from '@/stores/tagsView'
+import { createPasswordValidator } from '@/utils/passwordValidator'
 
 interface User {
   oldPassword?: string
@@ -51,7 +52,7 @@ const rules = {
   oldPassword: [{ required: true, message: '旧密码不能为空', trigger: 'blur' }],
   newPassword: [
     { required: true, message: '新密码不能为空', trigger: 'blur' },
-    { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
+    { validator: createPasswordValidator(), trigger: 'blur' }
   ],
   confirmPassword: [
     { required: true, message: '确认密码不能为空', trigger: 'blur' },
