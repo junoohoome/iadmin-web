@@ -252,3 +252,216 @@ iadmin/
 - 核心表: sys_user、sys_role、sys_menu、sys_dept、sys_user_role、sys_role_menu、sys_role_dept
 - 附加表: sys_oper_log、sys_dict_type、sys_dict_data
 - 初始化脚本: `iadmin/sql/iadmin_init.sql`
+
+## 安全特性
+
+### Token 存储安全
+
+**Cookie 安全配置** (`src/utils/auth.ts`):
+- `sameSite: 'strict'` - 防止 CSRF 攻击
+- `secure: true` (生产环境/HTTPS) - 仅安全连接传输
+- `path: '/'` - 限制 Cookie 路径
+- `expires: 4小时` - 与后端 JWT 过期时间一致
+
+**重要**: 不要使用 `localStorage` 存储 Token，必须使用 `setToken()`/`getToken()` 函数。
+
+### 安全响应头
+
+**Vite 开发服务器** (`vite.config.ts`):
+```javascript
+headers: {
+  'X-Frame-Options': 'SAMEORIGIN',
+  'X-Content-Type-Options': 'nosniff',
+  'X-XSS-Protection': '1; mode=block',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Permissions-Policy': 'geolocation=(), microphone=(), camera=()'
+}
+```
+
+**HTML Meta 标签** (`index.html`):
+- `<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">`
+- `<meta http-equiv="X-Content-Type-Options" content="nosniff">`
+- `<meta http-equiv="X-XSS-Protection" content="1; mode=block">`
+- `<meta name="referrer" content="strict-origin-when-cross-origin">`
+
+### 密码复杂度验证
+
+**前端密码验证器** (`src/utils/passwordValidator.ts`):
+
+验证规则（与后端一致）:
+- 长度: 8-32 位
+- 必须包含大写字母
+- 必须包含小写字母
+- 必须包含数字
+- 必须包含特殊字符 (!@#$%^&* 等)
+- 不能包含用户名
+- 不能是常见弱密码
+
+**使用方式:**
+```typescript
+import { createPasswordValidator } from '@/utils/passwordValidator'
+
+// 在表单规则中使用
+const rules = {
+  password: [
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { validator: createPasswordValidator(() => form.userName), trigger: 'blur' }
+  ]
+}
+```
+
+### XSS 防护
+
+**XSS 过滤工具** (`src/utils/xssFilter.ts`):
+- `escapeHtml(str)` - HTML 实体转义
+- `filterXss(str, options)` - 综合清理函数
+- `sanitizeObject(obj)` - 递归清理对象
+- `isSafeUrl(url)` / `sanitizeUrl(url)` - URL 安全检查
+
+**Vue Composable** (`src/composables/useXssFilter.ts`):
+- `useXssFilter()` - 基础过滤方法
+- `useFilteredInput()` - 自动过滤输入值
+- `useFormSanitizer()` - 表单数据过滤
+
+**使用示例:**
+```typescript
+import { useXssFilter } from '@/composables/useXssFilter'
+
+const { filter, sanitize, checkUrl } = useXssFilter()
+
+// 过滤字符串
+const safeText = filter(userInput)
+
+// 检查 URL 是否安全
+if (checkUrl(url)) {
+  // 安全的 URL
+}
+```
+
+### 后端安全特性
+
+后端已实现以下安全特性（详见后端 CLAUDE.md）:
+
+| 特性 | 说明 |
+|------|------|
+| 登录失败锁定 | 5 次失败后锁定 30 分钟 |
+| 接口限流 | `@Limiter` 注解，滑动窗口算法 |
+| XSS 过滤 | 全局过滤器，支持 JSON Body |
+| 文件上传安全 | Magic Number 验证文件类型 |
+| CSP 响应头 | Content-Security-Policy |
+| 会话超时 | 30 分钟无活动自动登出 |
+| CORS 配置 | 开发环境仅允许 localhost:3000/8080 |
+
+### 安全最佳实践
+
+1. **不要禁用安全检查** - 生产环境必须启用所有安全特性
+2. **HTTPS** - 生产环境必须启用 HTTPS
+3. **环境变量** - 敏感配置通过 `.env` 文件管理，不硬编码
+4. **定期更新** - 保持依赖包更新，修复已知漏洞
+
+## 安全特性
+
+### Token 存储安全
+
+**Cookie 安全配置** (`src/utils/auth.ts`):
+- `sameSite: 'strict'` - 防止 CSRF 攻击
+- `secure: true` (生产环境/HTTPS) - 仅安全连接传输
+- `path: '/'` - 限制 Cookie 路径
+- `expires: 4小时` - 与后端 JWT 过期时间一致
+
+**重要**: 不要使用 `localStorage` 存储 Token，必须使用 `setToken()`/`getToken()` 函数。
+
+### 安全响应头
+
+**Vite 开发服务器** (`vite.config.ts`):
+```javascript
+headers: {
+  'X-Frame-Options': 'SAMEORIGIN',
+  'X-Content-Type-Options': 'nosniff',
+  'X-XSS-Protection': '1; mode=block',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Permissions-Policy': 'geolocation=(), microphone=(), camera=()'
+}
+```
+
+**HTML Meta 标签** (`index.html`):
+- `<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">`
+- `<meta http-equiv="X-Content-Type-Options" content="nosniff">`
+- `<meta http-equiv="X-XSS-Protection" content="1; mode=block">`
+- `<meta name="referrer" content="strict-origin-when-cross-origin">`
+
+### 密码复杂度验证
+
+**前端密码验证器** (`src/utils/passwordValidator.ts`):
+
+验证规则（与后端一致）:
+- 长度: 8-32 位
+- 必须包含大写字母
+- 必须包含小写字母
+- 必须包含数字
+- 必须包含特殊字符 (!@#$%^&* 等)
+- 不能包含用户名
+- 不能是常见弱密码
+
+**使用方式:**
+```typescript
+import { createPasswordValidator } from '@/utils/passwordValidator'
+
+// 在表单规则中使用
+const rules = {
+  password: [
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { validator: createPasswordValidator(() => form.userName), trigger: 'blur' }
+  ]
+}
+```
+
+### XSS 防护
+
+**XSS 过滤工具** (`src/utils/xssFilter.ts`):
+- `escapeHtml(str)` - HTML 实体转义
+- `filterXss(str, options)` - 综合清理函数
+- `sanitizeObject(obj)` - 递归清理对象
+- `isSafeUrl(url)` / `sanitizeUrl(url)` - URL 安全检查
+
+**Vue Composable** (`src/composables/useXssFilter.ts`):
+- `useXssFilter()` - 基础过滤方法
+- `useFilteredInput()` - 自动过滤输入值
+- `useFormSanitizer()` - 表单数据过滤
+
+**使用示例:**
+```typescript
+import { useXssFilter } from '@/composables/useXssFilter'
+
+const { filter, sanitize, checkUrl } = useXssFilter()
+
+// 过滤字符串
+const safeText = filter(userInput)
+
+// 检查 URL 是否安全
+if (checkUrl(url)) {
+  // 安全的 URL
+}
+```
+
+### 后端安全特性
+
+后端已实现以下安全特性（详见后端 CLAUDE.md）:
+
+| 特性 | 说明 |
+|------|------|
+| 登录失败锁定 | 5 次失败后锁定 30 分钟 |
+| 接口限流 | `@Limiter` 注解，滑动窗口算法 |
+| XSS 过滤 | 全局过滤器，支持 JSON Body |
+| 文件上传安全 | Magic Number 验证文件类型 |
+| CSP 响应头 | Content-Security-Policy |
+| 会话超时 | 30 分钟无活动自动登出 |
+| CORS 配置 | 开发环境仅允许 localhost:3000/8080 |
+
+### 安全最佳实践
+
+1. **不要禁用安全检查** - 生产环境必须启用所有安全特性
+2. **HTTPS** - 生产环境必须启用 HTTPS
+3. **环境变量** - 敏感配置通过 `.env` 文件管理，不硬编码
+4. **定期更新** - 保持依赖包更新，修复已知漏洞
+5. **避免 v-html** - 尽量不使用 `v-html`，必要时使用 `safeHtml()` 函数
